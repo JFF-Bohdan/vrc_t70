@@ -5,8 +5,3 @@ class VrcT70ErrorCodes:
     INCORRECT_VALUE = 0x03
     DS18B20_ERROR = 0x04
     DS18B20_BUSY = 0x05
-
-    # WRONG_SEQUENCE_ID = 0xf0
-    # WRONG_EVENT_ID = 0xfa
-    # WRONG_CONTROLLER_ADDRESS = 0xfb
-    # BAD_CRC = 0xfc
