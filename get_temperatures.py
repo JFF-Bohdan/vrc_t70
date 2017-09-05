@@ -15,7 +15,7 @@ def main():
     uart = init_serial(args.uart_name, args.uart_speed)
     communicator = VrcT70Communicator(uart, controller_address=args.device_address)
 
-    print("initializing communication...")
+    print("initializing communication with device {0} [0x{0:02x}]...".format(args.device_address))
     print("\tping")
     communicator.ping()
 

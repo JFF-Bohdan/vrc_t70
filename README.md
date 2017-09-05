@@ -30,6 +30,14 @@ Where:
 * `--uart com15` - specifies uart name. In this case `COM15` in Windows;
 * `--delay 0.1` - specifis delay of 0.1 second before sending ping request to device with next address.
 
+Example:
+
+`python find_device.py --uart com15 --min 1 --max 10`
+
+Where:
+* `--min 1` - minimal device address to check;
+* `--max 10` - maximal device address to check.s
+
 Sample output:
 
 ```

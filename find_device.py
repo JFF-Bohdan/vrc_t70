@@ -12,8 +12,9 @@ def main():
 
     total_devices_count = 0
     print("Searching...")
-    communicator = VrcT70Communicator(uart, controller_address=0x00)
-    for device_address in range(1, 0x0a):
+    communicator = VrcT70Communicator(uart)
+
+    for device_address in range(args.min_address, args.max_address + 1):
         communicator.controller_address = device_address
         try:
             communicator.ping()
@@ -36,6 +37,7 @@ def init_serial(uart_name, uart_speed, wait_delay):
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE
     )
+
 
 if __name__ == "__main__":
     res = main()

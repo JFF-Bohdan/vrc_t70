@@ -10,7 +10,8 @@ def get_args():
         action="store",
         dest="uart_name",
         type=str,
-        help="uart name"
+        help="uart name",
+        required=True
     )
 
     parser.add_argument(
@@ -45,7 +46,8 @@ def get_scaner_args():
         action="store",
         dest="uart_name",
         type=str,
-        help="uart name"
+        help="uart name",
+        required=True
     )
 
     parser.add_argument(
@@ -65,7 +67,27 @@ def get_scaner_args():
         dest="wait_delay",
         help="wait delay",
         type=float,
-        default=0.5
+        default=0.15
+    )
+
+    parser.add_argument(
+        "-m",
+        "--min",
+        action="store",
+        dest="min_address",
+        help="min address for search",
+        type=int,
+        default=1
+    )
+
+    parser.add_argument(
+        "-x",
+        "--max",
+        action="store",
+        dest="max_address",
+        help="max address for search",
+        type=int,
+        default=0xff - 1
     )
 
     return parser.parse_args()
