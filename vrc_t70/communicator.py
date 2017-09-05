@@ -1,8 +1,9 @@
 from .base_communicator import VrcT70CommunicatorBase
 from .commands import VrcT70Commands
 from .request import VrcT70Request
-from .response import DeviceUniqueIdResponse, DevicesUniqueAddressesOnTrunkResponse, TemperatureOnDeviceResponse, \
-    TemperatureOnTrunkResponse, TrunkSensortsCountResponse, SessionIdResponse, NewAddressResponse
+from .response import (DeviceUniqueIdResponse, DevicesUniqueAddressesOnTrunkResponse, NewAddressResponse,
+                       SessionIdResponse, TemperatureOnDeviceResponse, TemperatureOnTrunkResponse,
+                       TrunkSensortsCountResponse)
 
 
 class VrcT70Communicator(VrcT70CommunicatorBase):

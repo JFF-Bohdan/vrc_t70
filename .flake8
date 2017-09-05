@@ -7,7 +7,8 @@ exclude =
 	dev,
 	doc,
 	log,
-	__init__.py
+	__init__.py,
+	test.py
 max-line-length = 150
 max-complexity = 10
 filename = *.py

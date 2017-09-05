@@ -3,16 +3,17 @@ import random
 
 import serial
 
+from tools_shared.cmd_line_parser import get_args
+
 from vrc_t70.communicator import VrcT70Communicator
 from vrc_t70.limitations import MAX_TRUNKS_COUNT
 
 
 def main():
-    uart_name = "com15"
-    initial_device_address = 0x01
+    args = get_args()
 
-    uart = init_serial(uart_name)
-    communicator = VrcT70Communicator(uart, controller_address=initial_device_address)
+    uart = init_serial(args.uart_name, args.uart_speed)
+    communicator = VrcT70Communicator(uart, controller_address=args.device_address)
 
     print("initializing communication...")
     print("\tping")
@@ -83,7 +84,7 @@ def main():
             )
 
     uart.close()
-    
+
 
 def rescan_devices_on_all_trunks(communicator):
     res = []
@@ -95,7 +96,7 @@ def rescan_devices_on_all_trunks(communicator):
     return res
 
 
-def init_serial(uart_name, uart_speed=115200):
+def init_serial(uart_name, uart_speed):
     return serial.Serial(
         uart_name,
         baudrate=uart_speed,
