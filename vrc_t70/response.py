@@ -51,7 +51,7 @@ class VrcT70Response(object):
             setattr(self, k, v)
 
 
-class TrunkRescanResult(VrcT70Response):
+class TrunkRescanResultResponse(VrcT70Response):
     def __init__(self, data):
         super().__init__(data)
 
@@ -62,7 +62,7 @@ class TrunkRescanResult(VrcT70Response):
         return self.data[1]
 
 
-class TemperatureOnDevice(VrcT70Response):
+class TemperatureOnDeviceResponse(VrcT70Response):
     def __init__(self, data):
         super().__init__(data)
 
@@ -80,7 +80,7 @@ class TemperatureOnDevice(VrcT70Response):
         return res
 
 
-class DeviceUniqueId(VrcT70Response):
+class DeviceUniqueIdResponse(VrcT70Response):
     def __init__(self, data):
         super().__init__(data)
 
@@ -92,3 +92,41 @@ class DeviceUniqueId(VrcT70Response):
 
     def unique_number(self):
         return self.data[2:]
+
+
+class TemperatureOnTrunkResponse(VrcT70Response):
+    def __init__(self, data):
+        super().__init__(data)
+
+    def trunk_number(self):
+        return self.data[0]
+
+    def temperatures_count(self):
+        return (len(self.data) - 1) // 5
+
+    def is_connected(self, device_index):
+        return self.data[1 + device_index * (1 + 4)] == 1
+
+    def temperature(self, device_index):
+        offset = 1 + device_index * (1 + 4) + 1
+        res, = struct.unpack("<f", self.data[offset: offset + 4])
+        return res
+
+
+class DevicesUniqueAddressesOnTrunkResponse(VrcT70Response):
+    def __init__(self, data):
+        super().__init__(data)
+
+    def trunk_number(self):
+        return self.data[0]
+
+    def devices_count(self):
+        return (len(self.data) - 1) // 5
+
+    def is_error_detected(self, device_index):
+        offset = 1 + device_index * (8 + 1) + 8
+        return self.data[offset] == 1
+
+    def device_unique_address(self, device_index):
+        offset = 1 + device_index * (8 + 1)
+        return self.data[offset: offset + 8]

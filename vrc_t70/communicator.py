@@ -1,7 +1,8 @@
 from .base_communicator import VrcT70CommunicatorBase
 from .commands import VrcT70Commands
 from .request import VrcT70Request
-from .response import DeviceUniqueId, TemperatureOnDevice, TrunkRescanResult
+from .response import DeviceUniqueIdResponse, DevicesUniqueAddressesOnTrunkResponse, TemperatureOnDeviceResponse, \
+    TemperatureOnTrunkResponse, TrunkRescanResultResponse
 
 
 class VrcT70Communicator(VrcT70CommunicatorBase):
@@ -27,7 +28,7 @@ class VrcT70Communicator(VrcT70CommunicatorBase):
             )
         )
 
-        return TrunkRescanResult(res)
+        return TrunkRescanResultResponse(res)
 
     def get_temperature_on_device(self, trunk_number, device_index, sequence_id=0x0000):
         res = self.send_command(
@@ -39,7 +40,7 @@ class VrcT70Communicator(VrcT70CommunicatorBase):
             )
         )
 
-        return TemperatureOnDevice(res)
+        return TemperatureOnDeviceResponse(res)
 
     def get_device_unique_number(self, trunk_number, device_index, sequence_id=0x0000):
         res = self.send_command(
@@ -51,4 +52,28 @@ class VrcT70Communicator(VrcT70CommunicatorBase):
             )
         )
 
-        return DeviceUniqueId(res)
+        return DeviceUniqueIdResponse(res)
+
+    def get_temperature_on_trunk(self, trunk_number, sequence_id=0x0000):
+        res = self.send_command(
+            VrcT70Request(
+                self.controller_address,
+                VrcT70Commands.GET_TEMPERATURES_ON_TRUNK,
+                sequence_id,
+                bytearray([trunk_number & 0xff])
+            )
+        )
+
+        return TemperatureOnTrunkResponse(res)
+
+    def get_devices_unique_addresses_on_trunk(self, trunk_number, sequence_id=0x0000):
+        res = self.send_command(
+            VrcT70Request(
+                self.controller_address,
+                VrcT70Commands.GET_DEVICES_UNIQUE_ON_TRUNK,
+                sequence_id,
+                bytearray([trunk_number & 0xff])
+            )
+        )
+
+        return DevicesUniqueAddressesOnTrunkResponse(res)
