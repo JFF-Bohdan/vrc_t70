@@ -1,4 +1,5 @@
 import binascii
+import random
 
 import serial
 
@@ -7,19 +8,33 @@ from vrc_t70.limitations import MAX_TRUNKS_COUNT
 
 
 def main():
-    serial = init_serial("com15")
-    communicator = VrcT70Communicator(serial, controller_address=0x01)
+    uart_name = "com15"
+    initial_device_address = 0x01
+
+    uart = init_serial(uart_name)
+    communicator = VrcT70Communicator(uart, controller_address=initial_device_address)
 
     print("initializing communication...")
-    communicator.ping(0xaabb)
+    print("\tping")
+    communicator.ping()
 
-    print("scanning for devices...")
-    devices_count_per_trunk = rescan_devices_on_all_trunks(communicator)
+    new_session_id = random_byte_array(4)
+    print("\tinitializing session id with {}".format(my_hexlify(new_session_id)))
+    r = communicator.set_session_id(new_session_id)
+
+    assert r.session_id() == new_session_id
+
+    r = communicator.get_session_id()
+    print("\tsession_id = {}".format(my_hexlify(r.session_id())))
+    assert r.session_id() == new_session_id
+
+    print("scanning for sensors...")
+    sensors_count_per_trunk = rescan_devices_on_all_trunks(communicator)
 
     print()
     print("--==Bulk data processing commands==--")
 
-    for trunk_number, devices_count in enumerate(devices_count_per_trunk):
+    for trunk_number, devices_count in enumerate(sensors_count_per_trunk):
         trunk_number += 1
 
         print("Trunk #{} [{} device(s)]:".format(trunk_number, devices_count))
@@ -28,7 +43,7 @@ def main():
         assert temperatures.temperatures_count() == devices_count
 
         addresses = communicator.get_devices_unique_addresses_on_trunk(trunk_number)
-        assert devices_count == addresses.devices_count()
+        assert devices_count == addresses.sensors_count()
 
         for device_index in range(devices_count):
             is_connected = temperatures.is_connected(device_index)
@@ -42,13 +57,13 @@ def main():
                 "\t[{}]:\t{:.2f} C\t[ number: {} ]".format(
                     device_index,
                     temperature,
-                    binascii.hexlify(uniq_number).decode("ascii")
+                    my_hexlify(uniq_number)
                 )
             )
 
     print()
     print("--==Simple data processing commands==--")
-    for trunk_number, devices_count in enumerate(devices_count_per_trunk):
+    for trunk_number, devices_count in enumerate(sensors_count_per_trunk):
         trunk_number += 1
         print("Trunk #{} [{} device(s)]:".format(trunk_number, devices_count))
 
@@ -63,19 +78,19 @@ def main():
                 "\t[{}]:\t{:.2f} C\t[ number: {} ]".format(
                     device_index,
                     temperature,
-                    binascii.hexlify(uniq_number).decode("ascii")
+                    my_hexlify(uniq_number)
                 )
             )
 
-    serial.close()
-
+    uart.close()
+    
 
 def rescan_devices_on_all_trunks(communicator):
     res = []
 
     for trunk_number in range(1, MAX_TRUNKS_COUNT + 1):
         r = communicator.rescan_devices_on_trunk(trunk_number)
-        res.append(r.devices_count())
+        res.append(r.sensors_count())
 
     return res
 
@@ -89,6 +104,14 @@ def init_serial(uart_name, uart_speed=115200):
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE
     )
+
+
+def my_hexlify(data):
+    return binascii.hexlify(data).decode("ascii")
+
+
+def random_byte_array(length):
+    return bytearray((random.getrandbits(8) for _ in range(length)))
 
 
 if __name__ == "__main__":

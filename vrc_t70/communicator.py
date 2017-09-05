@@ -2,7 +2,7 @@ from .base_communicator import VrcT70CommunicatorBase
 from .commands import VrcT70Commands
 from .request import VrcT70Request
 from .response import DeviceUniqueIdResponse, DevicesUniqueAddressesOnTrunkResponse, TemperatureOnDeviceResponse, \
-    TemperatureOnTrunkResponse, TrunkRescanResultResponse
+    TemperatureOnTrunkResponse, TrunkSensortsCountResponse, SessionIdResponse, NewAddressResponse
 
 
 class VrcT70Communicator(VrcT70CommunicatorBase):
@@ -28,7 +28,7 @@ class VrcT70Communicator(VrcT70CommunicatorBase):
             )
         )
 
-        return TrunkRescanResultResponse(res)
+        return TrunkSensortsCountResponse(res)
 
     def get_temperature_on_device(self, trunk_number, device_index, sequence_id=0x0000):
         res = self.send_command(
@@ -77,3 +77,50 @@ class VrcT70Communicator(VrcT70CommunicatorBase):
         )
 
         return DevicesUniqueAddressesOnTrunkResponse(res)
+
+    def get_session_id(self, sequence_id=0x0000):
+        res = self.send_command(
+            VrcT70Request(
+                self.controller_address,
+                VrcT70Commands.GET_SESSION_ID,
+                sequence_id
+            )
+        )
+
+        return SessionIdResponse(res)
+
+    def set_session_id(self, session_id, sequence_id=0x0000):
+        res = self.send_command(
+            VrcT70Request(
+                self.controller_address,
+                VrcT70Commands.SET_SESSION_ID,
+                sequence_id,
+                session_id[0: 4]
+            )
+        )
+
+        return SessionIdResponse(res)
+
+    def get_sensors_count_on_trunk(self, trunk_number, sequence_id=0x0000):
+        res = self.send_command(
+            VrcT70Request(
+                self.controller_address,
+                VrcT70Commands.GET_SENSORS_COUNT_ON_TRUNK,
+                sequence_id,
+                bytearray([trunk_number])
+            )
+        )
+
+        return TrunkSensortsCountResponse(res)
+
+    def set_new_address(self, new_address, sequence_id=0x0000):
+        res = self.send_command(
+            VrcT70Request(
+                self.controller_address,
+                VrcT70Commands.SET_NEW_DEVICE_ADDRESS,
+                sequence_id,
+                bytearray([new_address])
+            )
+        )
+
+        return NewAddressResponse(res)

@@ -51,14 +51,14 @@ class VrcT70Response(object):
             setattr(self, k, v)
 
 
-class TrunkRescanResultResponse(VrcT70Response):
+class TrunkSensortsCountResponse(VrcT70Response):
     def __init__(self, data):
         super().__init__(data)
 
     def trunk_number(self):
         return self.data[0]
 
-    def devices_count(self):
+    def sensors_count(self):
         return self.data[1]
 
 
@@ -120,7 +120,7 @@ class DevicesUniqueAddressesOnTrunkResponse(VrcT70Response):
     def trunk_number(self):
         return self.data[0]
 
-    def devices_count(self):
+    def sensors_count(self):
         return (len(self.data) - 1) // 5
 
     def is_error_detected(self, device_index):
@@ -130,3 +130,19 @@ class DevicesUniqueAddressesOnTrunkResponse(VrcT70Response):
     def device_unique_address(self, device_index):
         offset = 1 + device_index * (8 + 1)
         return self.data[offset: offset + 8]
+
+
+class SessionIdResponse(VrcT70Response):
+    def __init__(self, data):
+        super().__init__(data)
+
+    def session_id(self):
+        return self.data
+
+
+class NewAddressResponse(VrcT70Response):
+    def __init__(self, data):
+        super().__init__(data)
+
+    def new_address(self):
+        return self.data[0]
