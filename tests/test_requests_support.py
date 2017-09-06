@@ -1,7 +1,6 @@
 import binascii
 
 from vrc_t70.request import VrcT70Request
-from vrc_t70.response import VrcT70Response
 
 
 def test_ping_request_to_01():
@@ -49,13 +48,3 @@ def test_convert_to_bytes():
 
     assert res.lower() == expected_result.lower()
 
-
-def test_response_crc_validation():
-    r = VrcT70Response()
-    r.address = 0x01
-    r.id_event = 0x01
-    r.sequence_id = 0xaabb
-    r.processing_result = 0x00
-    r.crc = 0x74
-
-    assert r.is_crc_valid()

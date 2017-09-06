@@ -19,8 +19,6 @@ class VrcT70Response(object):
 
         self._crc_func = None
 
-        self.error_code = None
-
     def is_crc_valid(self):
         if self._crc_func is None:
             self._crc_func = crcmod.mkCrcFun(poly=0x1D5, initCrc=0, rev=False, xorOut=0)
@@ -90,7 +88,7 @@ class SensorUniqueIdResponse(VrcT70Response):
     def sensor_index(self):
         return self.data[1]
 
-    def unique_number(self):
+    def unique_address(self):
         return self.data[2:]
 
 

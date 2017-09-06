@@ -35,51 +35,51 @@ def main():
     print()
     print("--==Bulk data processing commands==--")
 
-    for trunk_number, devices_count in enumerate(sensors_count_per_trunk):
+    for trunk_number, sensors_count in enumerate(sensors_count_per_trunk):
         trunk_number += 1
 
-        print("Trunk #{} [{} device(s)]:".format(trunk_number, devices_count))
+        print("Trunk #{} [{} device(s)]:".format(trunk_number, sensors_count))
 
         temperatures = communicator.get_temperature_on_trunk(trunk_number)
-        assert temperatures.temperatures_count() == devices_count
+        assert temperatures.temperatures_count() == sensors_count
 
         addresses = communicator.get_sensors_unique_addresses_on_trunk(trunk_number)
-        assert devices_count == addresses.sensors_count()
+        assert sensors_count == addresses.sensors_count()
 
-        for sensor_index in range(devices_count):
+        for sensor_index in range(sensors_count):
             is_connected = temperatures.is_connected(sensor_index)
             assert is_connected
             temperature = temperatures.temperature(sensor_index)
 
             assert not addresses.is_error_detected(sensor_index)
-            uniq_number = addresses.sensor_unique_address(sensor_index)
+            unique_address = addresses.sensor_unique_address(sensor_index)
 
             print(
                 "\t[{}]:\t{:.2f} C\t[ number: {} ]".format(
                     sensor_index,
                     temperature,
-                    my_hexlify(uniq_number)
+                    my_hexlify(unique_address)
                 )
             )
 
     print()
     print("--==Simple data processing commands==--")
-    for trunk_number, devices_count in enumerate(sensors_count_per_trunk):
+    for trunk_number, sensors_count in enumerate(sensors_count_per_trunk):
         trunk_number += 1
-        print("Trunk #{} [{} device(s)]:".format(trunk_number, devices_count))
+        print("Trunk #{} [{} device(s)]:".format(trunk_number, sensors_count))
 
-        for sensor_index in range(devices_count):
+        for sensor_index in range(sensors_count):
             r = communicator.get_temperature_on_sensor_on_trunk(trunk_number, sensor_index)
             temperature = r.temperature()
 
             r = communicator.get_sensor_unique_address_on_trunk(trunk_number, sensor_index)
-            uniq_number = r.unique_number()
+            unique_address = r.unique_address()
 
             print(
                 "\t[{}]:\t{:.2f} C\t[ number: {} ]".format(
                     sensor_index,
                     temperature,
-                    my_hexlify(uniq_number)
+                    my_hexlify(unique_address)
                 )
             )
 
