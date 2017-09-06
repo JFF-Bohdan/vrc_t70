@@ -10,13 +10,6 @@ TESTDIR = tests
 MODULE_NAME = vrc_t70
 TMP_PATH = .\tmp
 
-#MKDIR = mkdir
-
-#CPDIR = xcopy
-#STATIC_FILES_DIR = .\static
-#CPDIR_KEYS = /e /i /h
-#BASE_DOCKER_IMAGE_TAG=reqlog_base
-
 environ: clean requirements.txt requirements-dev.txt
 	virtualenv $(ENV)
 	$(PIP) install -r requirements-dev.txt
