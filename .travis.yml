@@ -10,6 +10,6 @@ install:
     - pip install python-coveralls
 
 script:
-    - py.test tests -vv --cov=vrc_t70
+    - py.test tests -v --cov=vrc_t70
 after_success:
     - coveralls
