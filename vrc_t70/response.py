@@ -62,14 +62,14 @@ class TrunkSensortsCountResponse(VrcT70Response):
         return self.data[1]
 
 
-class TemperatureOnDeviceResponse(VrcT70Response):
+class TemperatureOnSensorResponse(VrcT70Response):
     def __init__(self, data):
         super().__init__(data)
 
     def trunk_number(self):
         return self.data[0]
 
-    def device_index(self):
+    def sensor_index(self):
         return self.data[1]
 
     def is_connected(self):
@@ -80,14 +80,14 @@ class TemperatureOnDeviceResponse(VrcT70Response):
         return res
 
 
-class DeviceUniqueIdResponse(VrcT70Response):
+class SensorUniqueIdResponse(VrcT70Response):
     def __init__(self, data):
         super().__init__(data)
 
     def trunk_number(self):
         return self.data[0]
 
-    def device_index(self):
+    def sensor_index(self):
         return self.data[1]
 
     def unique_number(self):
@@ -104,16 +104,16 @@ class TemperatureOnTrunkResponse(VrcT70Response):
     def temperatures_count(self):
         return (len(self.data) - 1) // 5
 
-    def is_connected(self, device_index):
-        return self.data[1 + device_index * (1 + 4)] == 1
+    def is_connected(self, sensor_index):
+        return self.data[1 + sensor_index * (1 + 4)] == 1
 
-    def temperature(self, device_index):
-        offset = 1 + device_index * (1 + 4) + 1
+    def temperature(self, sensor_index):
+        offset = 1 + sensor_index * (1 + 4) + 1
         res, = struct.unpack("<f", self.data[offset: offset + 4])
         return res
 
 
-class DevicesUniqueAddressesOnTrunkResponse(VrcT70Response):
+class SensorUniqueAddressOnTrunkResponse(VrcT70Response):
     def __init__(self, data):
         super().__init__(data)
 
@@ -123,12 +123,12 @@ class DevicesUniqueAddressesOnTrunkResponse(VrcT70Response):
     def sensors_count(self):
         return (len(self.data) - 1) // 5
 
-    def is_error_detected(self, device_index):
-        offset = 1 + device_index * (8 + 1) + 8
+    def is_error_detected(self, sensor_index):
+        offset = 1 + sensor_index * (8 + 1) + 8
         return self.data[offset] == 1
 
-    def device_unique_address(self, device_index):
-        offset = 1 + device_index * (8 + 1)
+    def sensor_unique_address(self, sensor_index):
+        offset = 1 + sensor_index * (8 + 1)
         return self.data[offset: offset + 8]
 
 
@@ -140,7 +140,7 @@ class SessionIdResponse(VrcT70Response):
         return self.data
 
 
-class NewAddressResponse(VrcT70Response):
+class ControllerNewAddressResponse(VrcT70Response):
     def __init__(self, data):
         super().__init__(data)
 

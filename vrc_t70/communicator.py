@@ -1,8 +1,8 @@
 from .base_communicator import VrcT70CommunicatorBase
 from .commands import VrcT70Commands
 from .request import VrcT70Request
-from .response import (DeviceUniqueIdResponse, DevicesUniqueAddressesOnTrunkResponse, NewAddressResponse,
-                       SessionIdResponse, TemperatureOnDeviceResponse, TemperatureOnTrunkResponse,
+from .response import (ControllerNewAddressResponse, SensorUniqueAddressOnTrunkResponse, SensorUniqueIdResponse,
+                       SessionIdResponse, TemperatureOnSensorResponse, TemperatureOnTrunkResponse,
                        TrunkSensortsCountResponse)
 
 
@@ -19,11 +19,11 @@ class VrcT70Communicator(VrcT70CommunicatorBase):
             )
         )
 
-    def rescan_devices_on_trunk(self, trunk_number, sequence_id=0x0000):
+    def rescan_sensors_on_trunk(self, trunk_number, sequence_id=0x0000):
         res = self.send_command(
             VrcT70Request(
                 self.controller_address,
-                VrcT70Commands.RESCAN_DEVICES_ON_TRUNK,
+                VrcT70Commands.RESCAN_SENSORS_ON_TRUNK,
                 sequence_id,
                 bytearray([trunk_number & 0xff])
             )
@@ -31,29 +31,29 @@ class VrcT70Communicator(VrcT70CommunicatorBase):
 
         return TrunkSensortsCountResponse(res)
 
-    def get_temperature_on_device(self, trunk_number, device_index, sequence_id=0x0000):
+    def get_temperature_on_sensor_on_trunk(self, trunk_number, sensor_index, sequence_id=0x0000):
         res = self.send_command(
             VrcT70Request(
                 self.controller_address,
-                VrcT70Commands.GET_TEMPERATURE_OF_DEVICE,
+                VrcT70Commands.GET_TEMPERATURE_OF_SENSOR_ON_TRUNK,
                 sequence_id,
-                bytearray([trunk_number & 0xff, device_index & 0xff])
+                bytearray([trunk_number & 0xff, sensor_index & 0xff])
             )
         )
 
-        return TemperatureOnDeviceResponse(res)
+        return TemperatureOnSensorResponse(res)
 
-    def get_device_unique_number(self, trunk_number, device_index, sequence_id=0x0000):
+    def get_sensor_unique_address_on_trunk(self, trunk_number, sensor_index, sequence_id=0x0000):
         res = self.send_command(
             VrcT70Request(
                 self.controller_address,
-                VrcT70Commands.GET_DEVICE_UNIQUE_NUMBER,
+                VrcT70Commands.GET_SENSOR_UNIQUE_ADDRESS_ON_TRUNK,
                 sequence_id,
-                bytearray([trunk_number & 0xff, device_index & 0xff])
+                bytearray([trunk_number & 0xff, sensor_index & 0xff])
             )
         )
 
-        return DeviceUniqueIdResponse(res)
+        return SensorUniqueIdResponse(res)
 
     def get_temperature_on_trunk(self, trunk_number, sequence_id=0x0000):
         res = self.send_command(
@@ -67,17 +67,17 @@ class VrcT70Communicator(VrcT70CommunicatorBase):
 
         return TemperatureOnTrunkResponse(res)
 
-    def get_devices_unique_addresses_on_trunk(self, trunk_number, sequence_id=0x0000):
+    def get_sensors_unique_addresses_on_trunk(self, trunk_number, sequence_id=0x0000):
         res = self.send_command(
             VrcT70Request(
                 self.controller_address,
-                VrcT70Commands.GET_DEVICES_UNIQUE_ON_TRUNK,
+                VrcT70Commands.GET_SENSORS_UNIQUE_ADDRESSES_ON_TRUNK,
                 sequence_id,
                 bytearray([trunk_number & 0xff])
             )
         )
 
-        return DevicesUniqueAddressesOnTrunkResponse(res)
+        return SensorUniqueAddressOnTrunkResponse(res)
 
     def get_session_id(self, sequence_id=0x0000):
         res = self.send_command(
@@ -114,14 +114,14 @@ class VrcT70Communicator(VrcT70CommunicatorBase):
 
         return TrunkSensortsCountResponse(res)
 
-    def set_new_address(self, new_address, sequence_id=0x0000):
+    def set_new_controller_address(self, new_address, sequence_id=0x0000):
         res = self.send_command(
             VrcT70Request(
                 self.controller_address,
-                VrcT70Commands.SET_NEW_DEVICE_ADDRESS,
+                VrcT70Commands.SET_CONTROLLER_NEW_ADDRESS,
                 sequence_id,
                 bytearray([new_address])
             )
         )
 
-        return NewAddressResponse(res)
+        return ControllerNewAddressResponse(res)

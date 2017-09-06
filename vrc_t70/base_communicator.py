@@ -27,29 +27,31 @@ class VrcT70CommunicatorBase(object):
         self._make_delay_before_request()
 
         self._send_command(cmd)
-        r = self._read_response(cmd.command)
+        res = self._read_response(cmd.command)
 
         self._last_request_time = time.time()
-        return r
+        return res
 
     def _make_delay_before_request(self):
         if self._last_request_time is None:
             return
 
-        d = time.time() - self._last_request_time
-        if d > MIN_DELAY_BETWEEN_REQUESTS:
+        delta = time.time() - self._last_request_time
+        if delta >= MIN_DELAY_BETWEEN_REQUESTS:
             return
 
-        time.sleep(MIN_DELAY_BETWEEN_REQUESTS - d)
+        time.sleep(MIN_DELAY_BETWEEN_REQUESTS - delta)
 
     def _send_command(self, cmd):
-        cmd = bytes(cmd)
         sent_bytes = self._serial.write(bytes(cmd))
 
         if sent_bytes != len(cmd):
             raise Exception("Can't send request")
 
     def _read_response(self, expected_event_id):
+        # 1 byte - device address, 1 byte - id event, 2 bytes - sequence id,
+        # 1 byte - processing result, 1 byte - data length,
+        # N bytes - data, 1 bytes - crc 8
         needful_bytes = 7
         read_bytes = self._serial.read(needful_bytes)
 

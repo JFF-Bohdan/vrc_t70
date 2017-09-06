@@ -36,3 +36,8 @@ class VrcT70Request(object):
 
     def __bytes__(self):
         return bytes(self.to_bytearray())
+
+    def __len__(self):
+        data_length = len(self.data) if self.data else 0
+        # 1 byte - address, 1 byte - command, 2 bytes - sequence id, 1 byte - data length, N bytes data, 1 byte - crc8
+        return 1 + 1 + 2 + 1 + data_length + 1
