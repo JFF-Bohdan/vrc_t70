@@ -7,9 +7,7 @@ python:
 install:
     - pip install -r requirements-dev.txt
     - pip install coveralls
-    - pip install python-coveralls
-
 script:
-    - py.test tests -v --cov=vrc_t70
+    - coverage run --source=vrc_t70 test
 after_success:
     - coveralls
