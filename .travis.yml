@@ -3,7 +3,11 @@ python:
     - 3.3
     - 3.4
     - 3.5
+    - 3.6	
 install:
     - pip install -r requirements-dev.txt
+	- pip install coveralls
 script:
-    - py.test
+    - py.test tests -vv --cov=vrc_t70
+after_success:
+  - coveralls

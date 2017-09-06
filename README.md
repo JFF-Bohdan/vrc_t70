@@ -1,6 +1,7 @@
 # vrc_t70
 
 ![](https://travis-ci.org/JFF-Bohdan/vrc_t70.svg?branch=master)	
+[![Coverage Status](https://coveralls.io/repos/github/JFF-Bohdan/vrc_t70/badge.svg?branch=master)](https://coveralls.io/github/JFF-Bohdan/vrc_t70?branch=master)
 
 Documentation, samples and tools for VRC-T70 controller.
 
