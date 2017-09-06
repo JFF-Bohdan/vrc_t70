@@ -133,6 +133,7 @@ def test_trunk_unique_addresses_parseer_successfully_parses_valid_data():
     res = SensorUniqueAddressOnTrunkResponse(bytearray_to_response(data_hex, False))
 
     assert res.trunk_number() == 7
+    assert res.sensors_count() == MAX_SENSORS_PER_TRUNK
 
     for index in range(MAX_SENSORS_PER_TRUNK):
         assert not res.is_error_detected(index)

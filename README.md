@@ -1,5 +1,7 @@
 # vrc_t70
 
+![](https://travis-ci.org/dbrgn/coverage-badge)
+	
 Documentation, samples and tools for VRC-T70 controller.
 
 ## General information

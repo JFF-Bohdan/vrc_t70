@@ -119,7 +119,7 @@ class SensorUniqueAddressOnTrunkResponse(VrcT70Response):
         return self.data[0]
 
     def sensors_count(self):
-        return (len(self.data) - 1) // 5
+        return (len(self.data) - 1) // 9
 
     def is_error_detected(self, sensor_index):
         offset = 1 + sensor_index * (8 + 1) + 8

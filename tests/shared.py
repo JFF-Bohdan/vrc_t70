@@ -33,5 +33,3 @@ def bytearray_to_response(data, contains_crc=True):
 
     assert res.is_crc_valid()
     return res
-
-
