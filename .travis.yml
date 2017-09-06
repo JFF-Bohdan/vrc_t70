@@ -8,6 +8,6 @@ install:
     - pip install -r requirements-dev.txt
     - pip install coveralls
 script:
-    - coverage run --source=vrc_t70 tests
+    - py.test tests -v --cov=vrc_t70
 after_success:
     - coveralls
