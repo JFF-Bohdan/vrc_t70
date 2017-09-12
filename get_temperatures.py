@@ -83,6 +83,18 @@ def main():
                 )
             )
 
+    print()
+    print("Retrieving sensors count:")
+    for trunk_number in range(1, MAX_TRUNKS_COUNT + 1):
+        r = communicator.get_sensors_count_on_trunk(trunk_number)
+
+        print(
+            "\ttrunk #{} - {}".format(
+                r.trunk_number(),
+                r.sensors_count()
+            )
+        )
+
     uart.close()
 
 

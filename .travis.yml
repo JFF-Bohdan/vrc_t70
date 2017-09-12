@@ -8,6 +8,7 @@ install:
     - pip install -r requirements-dev.txt
     - pip install coveralls
 script:
+    - python -m flake8
     - py.test tests -v --cov=vrc_t70
 after_success:
     - coveralls --verbose

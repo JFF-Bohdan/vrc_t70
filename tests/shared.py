@@ -23,7 +23,7 @@ def bytearray_to_response(data, contains_crc=True):
         if contains_crc:
             res.data = data[max_length_without_data: -1]
         else:
-            res.data = data[max_length_without_data+1:]
+            res.data = data[max_length_without_data + 1:]
 
     if contains_crc:
         res.crc = data[-1]

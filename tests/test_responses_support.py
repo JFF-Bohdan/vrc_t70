@@ -1,12 +1,10 @@
 import binascii
 import struct
 
-
-from vrc_t70.response import VrcT70Response, TrunkSensortsCountResponse, TemperatureOnSensorResponse, \
-    SensorUniqueIdResponse, TemperatureOnTrunkResponse, SessionIdResponse, ControllerNewAddressResponse, \
-    SensorUniqueAddressOnTrunkResponse
-
 from vrc_t70.limitations import MAX_SENSORS_PER_TRUNK
+from vrc_t70.response import ControllerNewAddressResponse, SensorUniqueAddressOnTrunkResponse, SensorUniqueIdResponse, \
+    SessionIdResponse, TemperatureOnSensorResponse, TemperatureOnTrunkResponse, TrunkSensortsCountResponse, \
+    VrcT70Response
 
 from .shared import bytearray_to_response
 
@@ -74,7 +72,7 @@ def test_temperature_on_sensor_parses_response_correctly():
 
 def test_sensor_unique_address_parsed_works_correctly():
     expected_sensor_address = "aabbccddeeff2233"
-    assert len(expected_sensor_address) == 8*2
+    assert len(expected_sensor_address) == 8 * 2
 
     data_hex = "01022233000a0203" + expected_sensor_address
     r = SensorUniqueIdResponse(bytearray_to_response(data_hex, False))

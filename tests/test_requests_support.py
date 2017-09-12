@@ -47,4 +47,3 @@ def test_convert_to_bytes():
     res = binascii.hexlify(cmd).decode("ascii")
 
     assert res.lower() == expected_result.lower()
-
