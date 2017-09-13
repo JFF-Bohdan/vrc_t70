@@ -195,6 +195,7 @@ Can be used to get temperature values for all sensord on trunk (1..7)
 **Data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 1 | trunk number (1..7)
 
 **Response data**:
