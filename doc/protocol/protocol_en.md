@@ -232,12 +232,14 @@ Can be uses to get sensor unique id (8 bytes) by trunk number (1..7) and sensor 
 **Data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 1 | trunk number (1..7)
 0x01 | 1 | sensor index (0..9)
 
 **Response data**:
 
 Offset | Size| Description
+-- | -- | --
 0x00 | 1 | trunk number (1..7)
 0x01 | 1 | sensor index (0..9)
 0x02 | 8 | sensor unique identifier
@@ -257,11 +259,13 @@ Can be used to get unique addresses of all sensors at trunk (1..7)
 **Data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 1 | trunk number (1..7)
 
 **Response data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 1 | Номер магистрали (1..7)
 0x01 | 8 | sensor unique number N
 0x09 | 1 | is error detected when communicating with sensor (0x00 - no errors detected, 0x01 - have error)
@@ -288,11 +292,13 @@ Can be used to set session id
 **Data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 4 | new session id
 
 **Response data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 4 | new session id
 
 ### 2.7. Get Session ID (`0x07`)
@@ -306,6 +312,7 @@ Can be used to get current session id
 **Response data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 4 | session id
 
 ### 2.8. Set New Device Address (`0x08`)
@@ -319,11 +326,13 @@ Info: when updating firmware address will be 0x01
 **Data**:
 
 Offset | Size| Description
+-- | -- | --
 0x00 | 1 | New controller address
 
 **Response data**:
 
 Offset | Size| Description
+-- | -- | --
 0x00 | 1 | new controller address
 
 Warning! Controller will make response with **old** address. It means that address was successfully
@@ -339,6 +348,7 @@ available at specified trunk and will store first 10 addresses in sensors array 
 **Data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 1 | trunk number (1..7)
 
 **Possible errors**:
@@ -347,6 +357,7 @@ Offset | Size | Description
 **Response data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 1| trunk number (1..7)
 0x01 | 1 | sensors count at trunk (0..10)
 
@@ -363,6 +374,7 @@ returns length of array of sensors on trunk.
 **Data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 1 | trunk number (1..7)
 
 **Possible errors**:
@@ -371,6 +383,7 @@ Offset | Size | Description
 **Response data**:
 
 Offset | Size | Description
+-- | -- | --
 0x00 | 1 | trunk number (1..7)
 0x01 | 1 | sensors count at trunk (0..10)
 
