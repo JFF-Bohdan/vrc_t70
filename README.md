@@ -1,15 +1,34 @@
-# vrc_t70
+﻿# vrc_t70
 
 ![](https://travis-ci.org/JFF-Bohdan/vrc_t70.svg?branch=master)	
 
-
 Documentation, samples and tools for VRC-T70 controller.
+
+This repository contains:
+
+* general information about controller;
+* protocol;
+* Python library which can be used for communication with controller;
+* tools and examples that uses Python library to to get current sensors data and servicing functionality.
+
+**RU:** документация, примеры и утилиты для работы с контроллером VRC-T70.
+Русская версия документации может быть найдена в [./doc/README_ru.md](./doc/README_ru.md)
 
 ## General information
 
-### Protocol
-TBD
+VRC-T70 controller able to communicate with up to 70
+widely known [DS18B20](https://www.google.com.ua/search?q=ds18b20%20tech%20spec)
+sensors, divided for 7 trunks.
 
+Each trunk can contain up to 10 sensors, connected using [1-Wire](https://en.wikipedia.org/wiki/1-Wire) bus. Controller
+can be connected to master device (for example computer or other controller) using
+[RS485](https://en.wikipedia.org/wiki/RS-485) bus. One RS485 network can contain many VRC-T70 devices, so
+real count of connected DS18B20 can be huge and fit your requirements.
+
+### Protocol
+
+VRC-T70 device communicates using open protocol, which documented in
+[./doc/protocol/protocol_en.md](./doc/protocol/protocol_en.md)
 
 ## Tools
 
@@ -70,14 +89,14 @@ Sample output:
 ```
 initializing communication with device 1 [0x01]...
         ping
-        initializing session id with 8c4cf4a3
-        session_id = 8c4cf4a3
+        initializing session id with efbab484
+        session_id = efbab484
 scanning for sensors...
 
 --==Bulk data processing commands==--
 Trunk #1 [0 device(s)]:
 Trunk #2 [1 device(s)]:
-        [0]:    23.12 C [ number: 28fffd7f90150155 ]
+        [0]:    24.31 C [ number: 28fffd7f90150155 ]
 Trunk #3 [0 device(s)]:
 Trunk #4 [0 device(s)]:
 Trunk #5 [0 device(s)]:
@@ -87,10 +106,19 @@ Trunk #7 [0 device(s)]:
 --==Simple data processing commands==--
 Trunk #1 [0 device(s)]:
 Trunk #2 [1 device(s)]:
-        [0]:    23.12 C [ number: 28fffd7f90150155 ]
+        [0]:    24.31 C [ number: 28fffd7f90150155 ]
 Trunk #3 [0 device(s)]:
 Trunk #4 [0 device(s)]:
 Trunk #5 [0 device(s)]:
 Trunk #6 [0 device(s)]:
 Trunk #7 [0 device(s)]:
+
+Retrieving sensors count:
+        trunk #1 - 0
+        trunk #2 - 1
+        trunk #3 - 0
+        trunk #4 - 0
+        trunk #5 - 0
+        trunk #6 - 0
+        trunk #7 - 0
 ```
