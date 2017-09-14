@@ -9,7 +9,8 @@ This repository contains:
 * general information about controller;
 * protocol;
 * Python library which can be used for communication with controller;
-* tools and examples that uses Python library to to get current sensors data and servicing functionality.
+* tools and examples that uses Python library to to get current sensors data and 
+servicing functionality.
 
 **RU:** документация, примеры и утилиты для работы с контроллером VRC-T70.
 Русская версия документации может быть найдена в [./doc/README_ru.md](./doc/README_ru.md)
@@ -20,10 +21,10 @@ VRC-T70 controller able to communicate with up to 70
 widely known [DS18B20](https://www.google.com.ua/search?q=ds18b20%20tech%20spec)
 sensors, divided for 7 trunks.
 
-Each trunk can contain up to 10 sensors, connected using [1-Wire](https://en.wikipedia.org/wiki/1-Wire) bus. Controller
-can be connected to master device (for example computer or other controller) using
-[RS485](https://en.wikipedia.org/wiki/RS-485) bus. One RS485 network can contain many VRC-T70 devices, so
-real count of connected DS18B20 can be huge and fit your requirements.
+Each trunk can contain up to 10 sensors, connected using [1-Wire](https://en.wikipedia.org/wiki/1-Wire) bus. 
+Controller can be connected to master device (for example computer or other controller) using
+[RS485](https://en.wikipedia.org/wiki/RS-485) bus. One RS485 network can contain many VRC-T70 
+devices, so real count of connected DS18B20 can be huge and fit your requirements.
 
 ### Protocol
 
@@ -34,14 +35,17 @@ VRC-T70 device communicates using open protocol, which documented in
 
 ### General information
 
-This repository contains some tools which can be useful when using VRC-T70 controller. Available tools:
+This repository contains some tools which can be useful when using VRC-T70 controller. 
+Available tools:
 
-* tool for devices searching;
+* tool for devices searching on RS-485 bus;
 * tool for temperature information gathering.
 
 ### Find device address
 
-You can scan RS-485 network for VRC-T70 devices using `find_device.py` script. It will ping all devices with addresses from `0x01` up to `0xfe` and will log information about all devices online.
+You can scan RS-485 network for VRC-T70 devices using `find_device.py` script. It 
+will ping all devices with addresses from `0x01` up to `0xfe` and will log information 
+about all devices online.
 
 Example command line:
 
@@ -50,7 +54,8 @@ Example command line:
 Where:
 
 * `--uart com15` - specifies uart name. In this case `COM15` in Windows;
-* `--delay 0.1` - specifis delay of 0.1 second before sending ping request to device with next address.
+* `--delay 0.1` - specifis delay of `0.1` second before sending ping request to 
+device with next address.
 
 Example:
 
@@ -58,7 +63,7 @@ Example:
 
 Where:
 * `--min 1` - minimal device address to check;
-* `--max 10` - maximal device address to check.s
+* `--max 10` - maximal device address to check.
 
 Sample output:
 
@@ -73,15 +78,17 @@ in this case script found one device with address `0x01.`
 
 ### Get temperatures of all sensors linked to the device
 
-You can get information about all temperatures on all connected sensors on all trunks using `get_temperatures`. Command line example:
+You can get information about all temperatures on all connected sensors on all trunks 
+using `get_temperatures`. Command line example:
 
 `python get_temperatures.py --uart com15 --address 1 --speed 115200`
 
 Where:
 
 * `--uart com15` - specifies uart name. In this case `COM15` in Windows;
-* `--address 1` - specifies device address - 0x01;
-* `--speed 115200` - specifies uart speed, 115200 if default device speed, so you can skip this parameter.
+* `--address 1` - specifies device address - `0x01`;
+* `--speed 115200` - specifies uart speed, `115200` if default device speed, so you can 
+skip this parameter.
 
 
 Sample output:

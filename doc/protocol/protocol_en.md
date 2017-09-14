@@ -2,14 +2,14 @@
 
 This document contains description of data exchange protocol for communication with VRC-T70 controller.
 
-
 ## 1. General information
 
 ### 1.1. About protocol
 #### 1.1.1 Communication protocol
 
-Communication protocol is binary and half-duplex. VRC-T70 device responses with response packets to each request
-packets from master device (PC or other controller). So VRC-T70 device is slave for master device (for example - PC).
+Communication protocol is binary and half-duplex. VRC-T70 device responses with response packets 
+to each request packets from master device (PC or other controller). So VRC-T70 device is slave for 
+master device (for example - PC).
 
 When transmitting value with more than one byte, it must be transferred in
 [Big-endian] (https://en.wikipedia.org/wiki/Endianness#Big-endian).
@@ -46,12 +46,12 @@ Where:
 * `address` - controller address in RS485 network;
 * `command_id` - command id;
 * `sequence_id` - 2 bytes number which must be returned by controller in response packet;
-* `data_length` - length of data segment, if not data will be provided shall be 0x00;
+* `data_length` - length of data segment, if not data will be provided shall be `0x00`;
 * `<data bytes>` - optional data if necessary (optional);
 * `crc` - cyclic redundancy check for error detections till transmission.
 
 `sequence_id` - sequence id can be used in master device to perform asynchronous behaviour. If you
-don't need this functionality you can specify 0x0000 as sequence id.
+don't need this functionality you can specify `0x0000` as sequence id.
 
 Crc specification:
 
@@ -67,8 +67,8 @@ CRC predefined characteristics or define own.
 
 Packet example:
 
-`{0x01 0x01 0x22 0x33 0x00 0x0a}` - PING packet to device with address 0x01, no payload (data),
-sequence id = 0x2233
+`{0x01 0x01 0x22 0x33 0x00 0x0a}` - PING packet to device with address `0x01`, no payload (data),
+sequence id = `0x2233`
 
 ### 1.3. Response packet
 
@@ -89,25 +89,25 @@ Where:
 * `event_id` - must be same as command id in request packet;
 * `sequence_id` - 2 bytes number which must be same as in request packet;
 * `processing_result` - error code for processing;
-* `data_length` - length of data segment, if not data will be provided shall be 0x00;
+* `data_length` - length of data segment, if not data will be provided shall be `0x00`;
 * `<data bytes>` - optional data if necessary (optional);
 * `crc` - cyclic redundancy check for error detections till transmission.
 
 Example:
 
-`{0x01 0x01 0x22 0x33 0x00 0x00 0x56}` - response for PING command from controler with address 0x01,
-no payload (data), processing result 0x00 (successful processing), sequence id = 0x2233
+`{0x01 0x01 0x22 0x33 0x00 0x00 0x56}` - response for PING command from controler with address `0x01`,
+no payload (data), processing result `0x00` (successful processing), sequence id = `0x2233`
 
 ### 1.4. Processing result codes
 
 Each request, processed by controller will achieve one of possible processing result codes:
 
-* 0x00 - NO_ERROR - no any errors when processing request;
-* 0x01 - UNKNOWN_COMMAND - unknown command;
-* 0x02 - ACCESS_DENIED	access denied;
-* 0x03 - INCORRECT_VALUE - incorrect value in command parameters;
-* 0x04 - DS18B20_ERROR - error when reading data from DS18B20 sensor;
-* 0x05 - DS18B20_BUSY - DS18B20 sensor is busy.
+* `0x00` - `NO_ERROR` - no any errors when processing request;
+* `0x01` - `UNKNOWN_COMMAND` - unknown command;
+* `0x02` - `ACCESS_DENIED`	access denied;
+* `0x03` - `INCORRECT_VALUE` - incorrect value in command parameters;
+* `0x04` - `DS18B20_ERROR` - error when reading data from DS18B20 sensor;
+* `0x05` - `DS18B20_BUSY` - DS18B20 sensor is busy.
 
 ### 1.5. Session control
 
@@ -115,15 +115,15 @@ For synchronization support and session control between master device (PC or oth
 session control was added.
 
 It's allows to be ensured that DS18B20 indexes and addresses in arrays is same on master
-controller and VRC-T70 controller.
+device and VRC-T70 controller.
 
 Algorithm description. When master device want ensure that session is OK, it can request for session
 id and modify behaviour depends on value returned:
 
-* master device request for current session id `2.7. Get Session ID (0x07)`
+* master device request for current session id `2.7. Get session id (0x07)`
 * if session id equals zero it means that VRC-T70 controller restarted;
 * if session id on master device and VRC-T70 controller is not equal it means that there is problem with session control;
-* when session is not OK, new session id (not equal to zero must be specified for controller) using `Set Session ID (0x06)`
+* when session is not OK, new session id (not equal to zero must be specified for controller) using `Set session id (0x06)`
 and sensors rescan shall be performed using `Rescan sensors on trunk (0x09)` for each trunk.
 
 ### 1.6. Trunks and sensors indexes and scanning logic
@@ -131,14 +131,37 @@ and sensors rescan shall be performed using `Rescan sensors on trunk (0x09)` for
 When VRC-T70 device starts it knows that it have 7 trunks (with indexes from 1 up to 7) with no
 any known devices.
 
-When master controller requests for sensors rescan operation on specified trunk number VRC-T70
-performs sensors scan and collects information about up to 10 devices for trunk. Each sensor address
+When master device requests for sensors rescan operation on specified trunk number VRC-T70
+performs sensors scan and collects information about for up to 10 devices per trunk. Each sensor address
 will be stored in array (which can hold max. 10 adresses) and can be accessed by index (from 0 to 9).
 
-After trunk was scanned VRC-T70 can be requested for temperature for specific sensor by specifying
-trunk number (from 1 to 7) and sensor index in array (from 0 to 9). Also, master device can request
-for sensors count on specific trunk and sensor addresses on specific trunk.
+Each sensor on each trunk will be requested for temperature by controller each 100 ms. 
 
+After trunk scanned VRC-T70 can be requested for temperature on specific sensor by specifying
+trunk number (from 1 to 7) and sensor index in array (from 0 to 9). Also, master device can be requested
+for sensors count on specific trunk and sensor unique addresses on specific trunk.
+
+Bulk operations also supported, controller can be requested for temperatures and/or unique addresses on all 
+sensors on trunk.
+
+So, possible indexes will be:
+
+* possible trunk index from 1 up to 7.
+* possible sensor index from 0 to 9.
+
+
+So, example master device logic after start can be like:
+
+* ensure that VRC-T70 available on RS 485 bus (can use `PING` command);
+* initialize session id controller (use `set session id` command);
+* initializing re-scan of sensors on all necessary trunks (for example from 1 up to 7) 
+(use `rescan sensors on trunk` command);
+* read sensors unique addresses (one by one using `get sensor unique address` or bulk by 
+using `get sensor unique addresses on trunk`)
+* perform repeated reading of session id (use `get session id`) and temperatures on 
+sensors (one by one using `get temperature on sensor` or using bulk 
+reading `get temperature values on trunk`) 
+ 
 ## 2. Requests.
 
 ### 2.1. Ping (`0x01`)
@@ -151,11 +174,13 @@ PING request - can be used to check that VRC-T70 controller is connected and onl
 
 **Response data**: `none`
 
-Packet example:
+Request packet example:
 
 `0x07 0x01 0x22 0x33 0x00 0x14`
 
-### 2.2. Get temperature value by trunk and sensor index (`0x02`)
+(PING request to device with address `0x07` with sequence id `0x2233`, no payload specified)
+
+### 2.2. Get temperature on sensor (`0x02`)
 
 command_id = `0x02`
 Can be used to get temperature for sensor with specified index (0...9) on specified trunk (1..7)
@@ -171,7 +196,6 @@ Offset | Size | Description
 0x00 | 1 | trunk number (1..7)
 0x01 | 1 | sensor index (0..9)
 
-
 **Response data**:
 
 Offset | Size | Description
@@ -181,12 +205,11 @@ Offset | Size | Description
 0x02 | 1 | is device connected (1 - connection available, 0 - no connection)
 0x03 | 4 | temperature (float, big endian)
 
-
-### 2.3. Get temperature values for trunk (`0x03`)
+### 2.3. Get temperature values on trunk (`0x03`)
 
 command_id = `0x03`
 
-Can be used to get temperature values for all sensord on trunk (1..7)
+Can be used to get temperature values for all sensors on trunk (1..7)
 
 **Possible errors**:
 
@@ -221,13 +244,14 @@ Info: in case when 10 sensors available at trunk, response packet size can be ca
 
 So max. size will be **58** bytes.
 
-### 2.4. Get sensor unique number (`0x04`)
+### 2.4. Get sensor unique addresses (`0x04`)
 
 command_id = `0x04`
 
-Can be uses to get sensor unique id (8 bytes) by trunk number (1..7) and sensor index (0..9)
+Can be uses to get sensor unique addresses (8 bytes) by trunk number (1..7) and sensor index (0..9)
 
 **Possible errors**:
+
 * `INCORRECT_VALUE` - trunk number and/or sensor index is invalid.
 
 **Data**:
@@ -243,18 +267,19 @@ Offset | Size| Description
 -- | -- | --
 0x00 | 1 | trunk number (1..7)
 0x01 | 1 | sensor index (0..9)
-0x02 | 8 | sensor unique identifier
+0x02 | 8 | sensor unique address
 
 Request example:
 
 `0x07 0x04 0x22 0x33 0x02 0x01 0x00 0xC3`
 
-### 2.5. Get sensor unique numbers by trunk (`0x05`)
+### 2.5. Get sensor unique addresses on trunk (`0x05`)
 command_id = `0x05`
 
 Can be used to get unique addresses of all sensors at trunk (1..7)
 
 **Possible errors**:
+
 * `INCORRECT_VALUE` - trunk number is invalid.
 
 **Data**:
@@ -268,7 +293,7 @@ Offset | Size | Description
 Offset | Size | Description
 -- | -- | --
 0x00 | 1 | Номер магистрали (1..7)
-0x01 | 8 | sensor unique number N
+0x01 | 8 | sensor unique addresses N
 0x09 | 1 | is error detected when communicating with sensor (0x00 - no errors detected, 0x01 - have error)
 ...	| ... |...
 
@@ -284,7 +309,7 @@ Info: in case when 10 sensors available at trunk, response packet size can be ca
 
 So max. size will be **98** bytes.
 
-### 2.6. Set Session ID (`0x06`)
+### 2.6. Set Session Id (`0x06`)
 
 command_id = `0x06`
 
@@ -302,7 +327,7 @@ Offset | Size | Description
 -- | -- | --
 0x00 | 4 | new session id
 
-### 2.7. Get Session ID (`0x07`)
+### 2.7. Get session id (`0x07`)
 
 command_id = `0x07`
 
@@ -316,7 +341,7 @@ Offset | Size | Description
 -- | -- | --
 0x00 | 4 | session id
 
-### 2.8. Set New Device Address (`0x08`)
+### 2.8. Set new device address (`0x08`)
 
 command_id = `0x08`
 
@@ -339,7 +364,7 @@ Offset | Size| Description
 Warning! Controller will make response with **old** address. It means that address was successfully
 updated. Next response possible only by using new address.
 
-## 2.9. Rescan Trunk (`0x09`)
+## 2.9. Rescan sensors on trunk (`0x09`)
 
 command_id = `0x09`
 
@@ -353,6 +378,7 @@ Offset | Size | Description
 0x00 | 1 | trunk number (1..7)
 
 **Possible errors**:
+
 * `INCORRECT_VALUE` - trunk number is invalid.
 
 **Response data**:
@@ -363,7 +389,7 @@ Offset | Size | Description
 0x01 | 1 | sensors count at trunk (0..10)
 
 Warning! Sensors order can be different for different calls of this command. For example one or more
-sensors can be dicsonnected and/or added.
+sensors can be disconnected and/or added.
 
 ### 2.10. Get sensors count on trunk (`0x0A`)
 
@@ -379,6 +405,7 @@ Offset | Size | Description
 0x00 | 1 | trunk number (1..7)
 
 **Possible errors**:
+
 * `INCORRECT_VALUE` - trunk number is invalid.
 
 **Response data**:
@@ -386,6 +413,4 @@ Offset | Size | Description
 Offset | Size | Description
 -- | -- | --
 0x00 | 1 | trunk number (1..7)
-0x01 | 1 | sensors count at trunk (0..10)
-
-
+0x01 | 1 | sensors count on trunk (0..10)
