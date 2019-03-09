@@ -49,14 +49,23 @@ class VrcT70CommunicatorBase(object):
             raise Exception("Can't send request")
 
     def _read_response(self, expected_event_id):
-        # 1 byte - device address, 1 byte - id event, 2 bytes - sequence id,
-        # 1 byte - processing result, 1 byte - data length,
-        # N bytes - data, 1 bytes - crc 8
-        needful_bytes = 7
-        read_bytes = self._serial.read(needful_bytes)
+        # 1 byte - device address
+        # 1 byte - id event
+        # 2 bytes - sequence id
+        # 1 byte - processing result
+        # 1 byte - data length
+        # N bytes - data,
+        # 1 bytes - crc 8
+        expected_bytes_count = 7
+        read_bytes = self._serial.read(expected_bytes_count)
 
-        if len(read_bytes) != needful_bytes:
-            raise Exception("Can't read response")
+        if len(read_bytes) != expected_bytes_count:
+            raise Exception(
+                "Can't read response. read_bytes_count = {} expected_bytes_count = {}".format(
+                    len(read_bytes),
+                    expected_bytes_count
+                )
+            )
 
         res = VrcT70Response()
 
