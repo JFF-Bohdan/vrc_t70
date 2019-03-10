@@ -1,36 +1,39 @@
 import time
 
 
-from .limitations import MIN_DELAY_BETWEEN_REQUESTS
+from .defaults import DEFAULT_CONTROLLER_ADDRESS, MAX_RETRIES_FOR_REQUEST, MIN_DELAY_BETWEEN_REQUESTS
+from .exceptions import BadCrc, NoAnswerFromController, WrongBytesCount, WrongControllerAddress, WrongEventId
 from .response import VrcT70Response
 
 
-class BadCrc(Exception):
-    pass
-
-
-class WrongEventId(Exception):
-    pass
-
-
-class WrongControllerAddress(Exception):
-    pass
-
-
 class VrcT70CommunicatorBase(object):
-    def __init__(self, serial, controller_address=0x01):
+    def __init__(self, serial, controller_address=DEFAULT_CONTROLLER_ADDRESS):
         self._serial = serial
         self.controller_address = controller_address
         self._last_request_time = None
+        self._requests_retries_count = MAX_RETRIES_FOR_REQUEST
 
     def send_command(self, cmd):
-        self._make_delay_before_request()
+        for request_number in range(self._requests_retries_count):
+            self._make_delay_before_request()
 
-        self._send_command(cmd)
-        res = self._read_response(cmd.command)
+            try:
+                self._send_command(cmd)
+                res = self._read_response(cmd.command)
+                self._last_request_time = time.time()
 
-        self._last_request_time = time.time()
-        return res
+                return res
+
+            except (WrongBytesCount, BadCrc, WrongEventId, WrongControllerAddress):
+                self._serial.flush()
+                continue
+
+        raise NoAnswerFromController(
+            "No answer from controller 0x{:02x}, retries count {}".format(
+                self.controller_address,
+                self._requests_retries_count
+            )
+        )
 
     def _make_delay_before_request(self):
         if self._last_request_time is None:
@@ -60,7 +63,7 @@ class VrcT70CommunicatorBase(object):
         read_bytes = self._serial.read(expected_bytes_count)
 
         if len(read_bytes) != expected_bytes_count:
-            raise Exception(
+            raise WrongBytesCount(
                 "Can't read response. read_bytes_count = {} expected_bytes_count = {}".format(
                     len(read_bytes),
                     expected_bytes_count
@@ -93,9 +96,19 @@ class VrcT70CommunicatorBase(object):
             raise BadCrc()
 
         if res.id_event != expected_event_id:
-            raise WrongEventId()
+            raise WrongEventId(
+                "expected_event_id = {}, received event id = {}".format(
+                    expected_event_id,
+                    res.id_event
+                )
+            )
 
         if res.address != self.controller_address:
-            raise WrongControllerAddress()
+            raise WrongControllerAddress(
+                "expected controller address = {} received controller address = {}".format(
+                    self.controller_address,
+                    res.address
+                )
+            )
 
         return res
