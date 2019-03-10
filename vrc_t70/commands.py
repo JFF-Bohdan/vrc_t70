@@ -1,4 +1,4 @@
-class VrcT70Commands:
+class VrcT70Commands(object):
     PING = 0x01
 
     GET_TEMPERATURE_OF_SENSOR_ON_TRUNK = 0x02

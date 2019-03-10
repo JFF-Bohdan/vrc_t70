@@ -1,4 +1,4 @@
-class VrcT70ErrorCodes:
+class VrcT70ErrorCodes(object):
     NO_ERROR = 0x00
     UNKNOWN_COMMAND = 0x01
     ACCESS_DENIED = 0x02
