@@ -1,7 +1,10 @@
 import binascii
 import logging
 import random
+import sys
 from collections import defaultdict, namedtuple
+
+from loguru import logger
 
 import serial
 
@@ -21,17 +24,16 @@ SensorTemperatureData = namedtuple(
 )
 
 
-def init_logger(logger_name=__name__, log_level=logging.DEBUG):
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+def init_logger(log_level="INFO"):
+    logger.remove()
 
-    logger = logging.getLogger(logger_name)
-    logger.setLevel(log_level)
-
-    ch = logging.StreamHandler()
-    ch.setLevel(log_level)
-
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
+    logger.add(
+        sys.stderr,
+        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} {message}",
+        level=log_level,
+        backtrace=True,
+        diagnose=True
+    )
 
     return logger
 
@@ -94,7 +96,7 @@ def print_sensors_data(sensors_data, logger):
 
 def main():
     args = get_args()
-    logger = init_logger("temp reader")
+    logger = init_logger()
     logger.debug("app started")
 
     uart = init_serial(args.uart_name, args.uart_speed)

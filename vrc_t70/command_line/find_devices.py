@@ -1,5 +1,8 @@
+import sys
 import time
 from collections import namedtuple
+
+from loguru import logger
 
 import serial
 
@@ -21,7 +24,18 @@ def main():
     uart = init_serial(args.uart_name, args.uart_speed, args.wait_delay)
 
     total_devices_count = 0
-    print("Searching...")
+
+    logger.remove()
+
+    logger.add(
+        sys.stderr,
+        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} {message}",
+        level="INFO",
+        backtrace=True,
+        diagnose=True
+    )
+
+    logger.info("Searching...")
     communicator = VrcT70Communicator(uart)
 
     found_devices = list()
@@ -56,8 +70,10 @@ def main():
 
     table = AsciiTable(result_table_data)
     print("")
-    print(table.table)
-    print("Done. Total_devices_count = {}".format(total_devices_count))
+    logger.info("\n{}".format(table.table))
+
+    seconds_elapsed = round(time.time() - tm_begin, 2)
+    logger.info("Done @ {} second(s). Total_devices_count = {}".format(seconds_elapsed, total_devices_count))
 
     uart.close()
     return 0

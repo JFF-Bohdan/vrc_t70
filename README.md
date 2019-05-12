@@ -59,7 +59,30 @@ pip install -e git+https://github.com/JFF-Bohdan/vrc_t70@master#egg=vrc_t70
 
 #### General information
 
-Tools can be used after package installation only
+Tools can be used after package installation only.
+
+
+Windows users: in case if you installed under virtual environment and
+activated it, you will be able to use short version of command. Otherwise
+you will be required to use long version of command
+
+#### List available COM ports
+
+Short version:
+
+`list_ports`
+
+
+Long version:
+
+`python -m vrc_t70.command_line.list_ports`
+
+Possible output:
+
+```
+2019-05-12 at 21:00:02 | INFO found 1 port(s)
+2019-05-12 at 21:00:02 | INFO   'COM15' ('USB Serial Port (COM15)')
+```
 
 #### Find device address
 
@@ -67,9 +90,13 @@ You can scan RS-485 network for VRC-T70 devices using `find_device` tool. It
 will ping all devices with addresses from `0x01` up to `0xfe` and will log information 
 about all devices online.
 
-Example command line:
+Long version:
 
-`find_device --uart com15 --delay 0.1`
+`python -m vrc_t70.command_line.find_devices --uart com15 --delay 0.1`
+
+Short version:
+
+`find_devices --uart com15 --delay 0.1`
 
 Where:
 
@@ -88,18 +115,32 @@ Where:
 Sample output:
 
 ```
-Searching...
+> python -m vrc_t70.command_line.find_devices --uart com15 --delay 0.1
+2019-05-12 at 21:04:17 | INFO Searching...
         found device with address 0x01
-Done. Total_devices_count = 1
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 254/254 [01:16<00:00,  3.28rqs/s[{'devices': 1}]]
+
+2019-05-12 at 21:05:34 | INFO
++-----------------+----------------+
+| Timestamp found | Device Address |
++-----------------+----------------+
+| 0.08            | 0x01           |
++-----------------+----------------+
+2019-05-12 at 21:05:34 | INFO Done @ 76.93 second(s). Total_devices_count = 0
 ```
 
 in this case script found one device with address `0x01.`
 
-
 #### Get temperatures of all sensors linked to the device
 
 You can get information about all temperatures on all connected sensors on all trunks 
-using `get_temperatures`. Command line example:
+using `get_temperatures`.
+
+Long version:
+
+`python -m vrc_t70.command_line.get_temperatures --uart com15 --address 1 --speed 115200`
+
+Short version:
 
 `get_temperatures --uart com15 --address 1 --speed 115200`
 
@@ -114,38 +155,72 @@ skip this parameter.
 Sample output:
 
 ```
-initializing communication with device 1 [0x01]...
-        ping
-        initializing session id with efbab484
-        session_id = efbab484
-scanning for sensors...
+> python -m vrc_t70.command_line.get_temperatures --uart com15 --address 1 --speed 115200
+2019-05-12 at 21:07:57 | INFO initializing communication with device 1 [0x01]...
+2019-05-12 at 21:07:57 | INFO   ping
+2019-05-12 at 21:07:58 | INFO Rescanning devices on trunks
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:01<00:00,  4.92trunsk/s] 2019-05-12 at 21:07:59 | INFO sensors per trunks:
++------------+---------------+
+| Trunk Name | Sensors Count |
++------------+---------------+
+| Trunk-2    | 1             |
+| Trunk-3    | 1             |
+| Trunk-4    | 1             |
++------------+---------------+
 
---==Bulk data processing commands==--
-Trunk #1 [0 device(s)]:
-Trunk #2 [1 device(s)]:
-        [0]:    24.31 C [ number: 28fffd7f90150155 ]
-Trunk #3 [0 device(s)]:
-Trunk #4 [0 device(s)]:
-Trunk #5 [0 device(s)]:
-Trunk #6 [0 device(s)]:
-Trunk #7 [0 device(s)]:
+2019-05-12 at 21:07:59 | INFO bulk data processing commands
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:01<00:00,  4.51trunks/s] 2019-05-12 at 21:08:01 | INFO data for Trunk-2:
++-------+-------------+------------------+
+| Index | Temperature | Address          |
++-------+-------------+------------------+
+| 0     | 23.0        | 28fffd7f90150155 |
++-------+-------------+------------------+
 
---==Simple data processing commands==--
-Trunk #1 [0 device(s)]:
-Trunk #2 [1 device(s)]:
-        [0]:    24.31 C [ number: 28fffd7f90150155 ]
-Trunk #3 [0 device(s)]:
-Trunk #4 [0 device(s)]:
-Trunk #5 [0 device(s)]:
-Trunk #6 [0 device(s)]:
-Trunk #7 [0 device(s)]:
+2019-05-12 at 21:08:01 | INFO data for Trunk-3:
++-------+-------------+------------------+
+| Index | Temperature | Address          |
++-------+-------------+------------------+
+| 0     | 23.06       | 28ff6f31901504ab |
++-------+-------------+------------------+
 
-Retrieving sensors count:
-        trunk #1 - 0
-        trunk #2 - 1
-        trunk #3 - 0
-        trunk #4 - 0
-        trunk #5 - 0
-        trunk #6 - 0
-        trunk #7 - 0
+2019-05-12 at 21:08:01 | INFO data for Trunk-4:
++-------+-------------+------------------+
+| Index | Temperature | Address          |
++-------+-------------+------------------+
+| 0     | 23.06       | 28ff2c7d901501c1 |
++-------+-------------+------------------+
+
+2019-05-12 at 21:08:01 | INFO simple data processing commands
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 11.08trunk/s] 2019-05-12 at 21:08:01 | INFO data for Trunk-2:
++-------+-------------+------------------+
+| Index | Temperature | Address          |
++-------+-------------+------------------+
+| 0     | 23.0        | 28fffd7f90150155 |
++-------+-------------+------------------+
+
+2019-05-12 at 21:08:01 | INFO data for Trunk-3:
++-------+-------------+------------------+
+| Index | Temperature | Address          |
++-------+-------------+------------------+
+| 0     | 23.02       | 28ff6f31901504ab |
++-------+-------------+------------------+
+
+2019-05-12 at 21:08:01 | INFO data for Trunk-4:
++-------+-------------+------------------+
+| Index | Temperature | Address          |
++-------+-------------+------------------+
+| 0     | 23.06       | 28ff2c7d901501c1 |
++-------+-------------+------------------+
+
+2019-05-12 at 21:08:01 | INFO retrieving sensors count
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00,  9.45trunks/s] 2019-05-12 at 21:08:02 | INFO sensors per trunks:
++------------+---------------+
+| Trunk Name | Sensors Count |
++------------+---------------+
+| Trunk-2    | 1             |
+| Trunk-3    | 1             |
+| Trunk-4    | 1             |
++------------+---------------+
+
+2019-05-12 at 21:08:02 | INFO application finished
 ```
