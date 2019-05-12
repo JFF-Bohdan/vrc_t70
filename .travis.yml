@@ -1,27 +1,23 @@
 dist: xenial
 language: python
 python:
-    - 3.4
-    - 3.5
-    - 3.6
-    - 3.7
+- 3.6
 install:
-    - pip install -r requirements-dev.txt
-    - pip install coveralls
+- pip install -r requirements-dev.txt
+- pip install coveralls
 script:
-    - python -m flake8
-    - py.test tests -v --cov=vrc_t70
-    - python setup.py check
-    - python setup.py test
+- python -m flake8
+- py.test tests -v --cov=vrc_t70
+- python setup.py check
+- python setup.py test
 after_success:
-    - coveralls --verbose
+- coveralls --verbose
 deploy:
   provider: pypi
   user: kittyhawk
-  distributions: sdist bdist_wheel	
+  distributions: sdist bdist_wheel
   password:
-    secure: jmDXoyxCacF2FXSbxoMeigCkf8lXb6CAqQ1jQjwr5mv9RPMV0LvShJTgCPOQlt6V3pISV2yxo78btBaawc23q8iYrOA8YNHROerw0xIUmd4+xNpYQuImNebzr2fFV/DrkkcWe5Kyq03ujehuJmWINCYlNjXF4A7r/MG0pv2r0/hQT+Ug0h/x+OEvF/BxJABCAT3Rbl6T8THRfDVwg3wcpVia0c/VhWp4ZDssBMtTtxidZB1ZR+9B0Vf6sQwrdpZu5w5fT9u7nJ29iAR0qebgOre8wvQJy2iZN7p2QA+Skl5DOQEqsbcvhBiD8fvwygZzn6Odn32nckOrQAiBuRCGm+5rGlbwHxbwox4GVTRXoonPNILQnzTaDh6fAvvQvFat/O9/qcLWuvuKeM5wMuMigPEboqZYeI4uSZMcpVxAcT68233uhKCrQApUwmh2fN1AHSQ2cvpB6gNKdcBky6q4Kjrj6+pkrWofk8IS150SVw50xB6tWXO5+oIRFaJMIkfRY+YHSnS9/SAt1bZaSdcJqIT+R1Fztg+bFElGMRPoumNqIRwdiN/l9k7JfMlp6JXZ8qJ27l6v2s2vesqUT7nWilwh4f+1a0g2Mt/AUwri8yo7vZiVTkVEr8O0E8NzbT0jCKI3bLysOQVsFayfjSQ7u1yYsLQDKy/ztxoLuFwNbFA=
-
+    secure: FwjlvZ+4OziiNqBiN3h9Jq05I8o94OP5U9SlAIE3A7Y0IaVIZ+5psU+JTRsSIZTYB0KFclPkFirPvFQng2HEwDvkZfl4SU8wIMD8HeZFBoe4mhgAjSb5zQOQnv+9e30IKQ2lB48rzozFDGKdANmg2NfewI3f090q5wuYVb+osxRqrvfVfAJCgFK/hjeknFACZp+EDS9MIYjmNEwjNftDE0G7istwlo5ZjZHRnZ2Vh0adyGSHLx/HCNqldSlqmvamDWX4AsVmaLJ2LFqQIHhgjiR2VhDaYHzjlTL1BB+SvugAAJ4jrM+qyKWV6IGDxDsfEqGO8dKir/B2UhvjHgYw3G2kjalZ0IIu7dVe7Ev3ZLMt3Z/eb9nsxvMKX18++YBCgugfHBPAPXofKFDHFRviPwqDjCvi4Oen/ColvWzcFAjQ7fEcvUGZHmqmNkIq+yt6UTAEvGLLkxuVhXCpx08d1wth9h1TfYv1tK2mhgJNGYf9fq6kk9V3o51p3omG08dgG7w2fkr5f+7GfIFqOgxWouODSTH6CM0SPcvbIqfFSEJHWDldGtGQKnZ8RBfuyY6P8skyvKdHX7hoinzdTIsyoF33maAe8yy0T843bwuRnkG1AnkQALyZCD/8GTTNEQcYuw6FWGgQEPVizCTd6kHW/BZvSBF60S4u8/wuVYI11oQ=
   on:
     tags: false
     branch: master
