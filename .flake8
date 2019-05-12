@@ -3,6 +3,7 @@ exclude =
 	.git,
 	.idea,
 	env,
+	.eggs,
 	__pycache__,
 	dev,
 	doc,
