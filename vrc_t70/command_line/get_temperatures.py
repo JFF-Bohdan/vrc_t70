@@ -1,5 +1,4 @@
 import binascii
-import logging
 import random
 import sys
 from collections import defaultdict, namedtuple
@@ -14,8 +13,7 @@ from tools_shared.cmd_line_parser import get_args
 
 from tqdm import tqdm
 
-from vrc_t70.communicator import VrcT70Communicator
-from vrc_t70.limitations import MAX_TRUNKS_COUNT
+from vrc_t70 import MAX_TRUNKS_COUNT, VrcT70Communicator
 
 
 SensorTemperatureData = namedtuple(

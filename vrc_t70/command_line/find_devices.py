@@ -12,7 +12,7 @@ from tools_shared.cmd_line_parser import get_scaner_args
 
 from tqdm import tqdm, trange
 
-from vrc_t70.communicator import VrcT70Communicator
+from vrc_t70 import VrcT70Communicator
 
 
 FoundDeviceData = namedtuple("FoundDeviceData", ["seconds_elapsed", "device_address"])
