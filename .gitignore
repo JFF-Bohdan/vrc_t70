@@ -104,3 +104,5 @@ test.py
 .idea/
 bp/
 .coveralls.yml
+database/
+logs/

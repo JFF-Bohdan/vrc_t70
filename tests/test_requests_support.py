@@ -1,6 +1,6 @@
 import binascii
 
-from vrc_t70.request import VrcT70Request
+from vrc_t70.core.request import VrcT70Request
 
 
 def test_ping_request_to_01():

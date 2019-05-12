@@ -1,8 +1,8 @@
 import binascii
 import struct
 
-from vrc_t70.limitations import MAX_SENSORS_PER_TRUNK
-from vrc_t70.response import ControllerNewAddressResponse, SensorUniqueAddressOnTrunkResponse, SensorUniqueIdResponse, \
+from vrc_t70.core.limitations import MAX_SENSORS_PER_TRUNK
+from vrc_t70.core.response import ControllerNewAddressResponse, SensorUniqueAddressOnTrunkResponse, SensorUniqueIdResponse, \
     SessionIdResponse, TemperatureOnSensorResponse, TemperatureOnTrunkResponse, TrunkSensortsCountResponse, \
     VrcT70Response
 

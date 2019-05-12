@@ -3,7 +3,7 @@ import binascii
 
 import crcmod
 
-from vrc_t70.response import VrcT70Response
+from vrc_t70.core.response import VrcT70Response
 
 
 def bytearray_to_response(data, contains_crc=True):
