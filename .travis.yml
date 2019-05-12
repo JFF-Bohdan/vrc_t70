@@ -4,11 +4,24 @@ python:
     - 3.4
     - 3.5
     - 3.6
+    - 3.7
 install:
     - pip install -r requirements-dev.txt
     - pip install coveralls
 script:
     - python -m flake8
     - py.test tests -v --cov=vrc_t70
+    - python setup.py check
+    - python setup.py test
 after_success:
     - coveralls --verbose
+deploy:
+  provider: pypi
+  user: kittyhawk
+  distributions: sdist
+  password:
+    secure: dDvyURtxL0SBmSkw/fMZR9PWbg8gsJB/VKMMdPtmZzDeoC+G06G84hNexV8AH2984stqIuzQj1007+eDQyfLEWwZuNn2A/fgebhNy9uZBS0rx3jFDIyNnMRYkmP2FR1AYwfYduFN2D3mVNEWCIICigJX4aVpuSEyklnCJc/BBxVBbPZGCj+Qqu2fAuPInMxaJM39nbWCW8BXlYyznKHCn7d2uL/FSLuXifeXLYK+HmU40tty8UHX2r6d7qgbCG6ITNNaaWs99evydmD8IeC60pailFhryZA0RjcYuQaxbtm1/oD5jiURce5ApJFImU7O/8rDZHUGq7HWLZJt1VFpHilAVmnUxPg2+P0+93ZTlYhJI5zjKN88DInA49QgQemZDj3mX6XyIwPGXcCi0zKEqb3yJh/KbEYWvRzMvseSp07vqH9/9Rj2lvSA58OCJVn5tWDFmVfnIvdpkigJyOx9o3CUlxj6c11P9of2VY+CIY7MLy+sb8BX397Cq4ryBipqnUISS1chBZx9XPTt+e9uycsggxEzT3lIU7lnG0sMx9AhpvyRHaQP2p9sSnjl+HRN7m27LS2J+qb338M9og87RBMfUHZn8Bx+gbiZIgrHDfkpSNF/QFdO/ebKYXZGaTswm6WIXZbOY5qBhFXU3WzKFaiCDWZumRFfkpZOlwgfXFU=
+  on:
+    tags: false
+    branch: master
+    condition: $TRAVIS_PYTHON_VERSION = "3.7"
