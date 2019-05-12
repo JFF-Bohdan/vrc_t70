@@ -33,7 +33,7 @@ if __name__ == "__main__":
         packages=packages,
         version=__version__,
         description="Module to support VRC-T70 hardware",
-        long_description=read_file_content(README_FILE),
+        long_description="Please read https://github.com/JFF-Bohdan/vrc_t70/blob/master/README.md for information",
         author="Bohdan Danishevsky",
         author_email="dbn@aminis.com.ua",
         url="http://github.com/JFF-Bohdan/vrc_t70",
