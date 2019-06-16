@@ -47,7 +47,8 @@ if __name__ == "__main__":
         entry_points = {
             "console_scripts": [
                 "find_devices=vrc_t70.command_line.find_devices:main",
-                "get_temperatures=vrc_t70.command_line.get_temperatures:main"
+                "get_temperatures=vrc_t70.command_line.get_temperatures:main",
+                "list_ports=vrc_t70.command_line.list_ports:main"
             ],
         }
     )

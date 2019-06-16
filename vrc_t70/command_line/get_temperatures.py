@@ -1,5 +1,4 @@
 import binascii
-import logging
 import random
 from collections import defaultdict, namedtuple
 
@@ -14,26 +13,13 @@ from tqdm import tqdm
 from vrc_t70.communicator import VrcT70Communicator
 from vrc_t70.limitations import MAX_TRUNKS_COUNT
 
+from .shared import init_logger
+
 
 SensorTemperatureData = namedtuple(
     typename="SensorData",
     field_names=["sensor_address", "temperature", "trunk_number", "sensor_index"]
 )
-
-
-def init_logger(logger_name=__name__, log_level=logging.DEBUG):
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-
-    logger = logging.getLogger(logger_name)
-    logger.setLevel(log_level)
-
-    ch = logging.StreamHandler()
-    ch.setLevel(log_level)
-
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-    return logger
 
 
 def print_sensors_per_trunk_count(sensors_count_per_trunk, logger, skip_empty_trunks = True):

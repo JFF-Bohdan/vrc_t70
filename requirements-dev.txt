@@ -9,5 +9,3 @@ pytest-catchlog==1.2.2
 pytest-cov==2.4.0
 yapf==0.16.1
 git+https://github.com/yaml/pyyaml
-terminaltables==3.1.0
-tqdm==4.31.1

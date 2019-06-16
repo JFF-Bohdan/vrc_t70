@@ -36,20 +36,22 @@ VRC-T70 device communicates using open protocol, which documented in
 
 ### General information
 
-This repository contains `vrc_t70` package that can be used in your Python Program to communicate with VRC-T70 device. Also, it contains some tools which can be useful when using VRC-T70 controller. 
+This repository contains `vrc_t70` package that can be used in
+your Python Program to communicate with VRC-T70 device.
+Also, it contains some tools which can be useful when using VRC-T70
+controller.
 
 Available tools:
 
+* tool for available ports listing;
 * tool for devices searching on RS-485 bus;
 * tool for temperature information gathering.
-
 
 ### Installation
 
 #### Latest PyPI stable release
 
-```pip install tqdm```
-
+```pip install vrc_t70```
 
 #### Latest development release on GitHub
 
@@ -59,17 +61,32 @@ pip install -e git+https://github.com/JFF-Bohdan/vrc_t70@master#egg=vrc_t70
 
 #### General information
 
-Tools can be used after package installation only
+Tools can be used only after VRC-T70 package installation.
+
+Example outputs may be outdated. Command line example is actual.
+
+#### List all available ports
+
+You can find information about all available COM ports in your system
+by executing: `list_ports`
+
+Sample output:
+
+```
+> list_ports
+2019-06-17 00:03:29,332 - ports lister - INFO - found 1 ports
+2019-06-17 00:03:29,333 - ports lister - INFO -         [0] = 'COM15' ('USB Serial Port (COM15)')
+```
 
 #### Find device address
 
-You can scan RS-485 network for VRC-T70 devices using `find_device` tool. It
+You can scan RS-485 network for VRC-T70 devices using `find_devices` tool. It
 will ping all devices with addresses from `0x01` up to `0xfe` and will log information 
 about all devices online.
 
-Example command line:
+Example command line (find devices with any address, can take ~1.5 minutes for execution):
 
-`find_device --uart com15 --delay 0.1`
+`find_devices --uart com15 --delay 0.1`
 
 Where:
 
@@ -79,7 +96,7 @@ device with next address.
 
 Example:
 
-`find_device --uart com15 --min 1 --max 10`
+`find_devices --uart com15 --min 1 --max 10`
 
 Where:
 * `--min 1` - minimal device address to check;
@@ -88,13 +105,19 @@ Where:
 Sample output:
 
 ```
-Searching...
+> find_devices --uart com15 --min 1 --max 10
+2019-06-17 00:13:59,128 - temp reader - INFO - Searching...
         found device with address 0x01
-Done. Total_devices_count = 1
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:04<00:00,  2.26rqs/s[{'devices': 1}]] 2019-06-17 00:14:03,298 - temp reader - INFO - :
++-----------------+----------------+
+| Timestamp found | Device Address |
++-----------------+----------------+
+| 0.06            | 1 [0x01]       |
++-----------------+----------------+
+2019-06-17 00:14:03,302 - temp reader - INFO - Done. Total_devices_count = 0 (Spent time: 4.17)
 ```
 
 in this case script found one device with address `0x01.`
-
 
 #### Get temperatures of all sensors linked to the device
 
@@ -114,38 +137,44 @@ skip this parameter.
 Sample output:
 
 ```
-initializing communication with device 1 [0x01]...
-        ping
-        initializing session id with efbab484
-        session_id = efbab484
-scanning for sensors...
+> get_temperatures --uart com15 --address 1 --speed 115200
+2019-06-17 00:16:04,080 - temp reader - DEBUG - app started
+2019-06-17 00:16:04,095 - temp reader - INFO - initializing communication with device 1 [0x01]...
+2019-06-17 00:16:04,096 - temp reader - INFO -  ping
+2019-06-17 00:16:04,159 - temp reader - DEBUG -         initializing session id with 3a9011c5
+2019-06-17 00:16:04,349 - temp reader - DEBUG -         session_id = 3a9011c5
+2019-06-17 00:16:04,350 - temp reader - DEBUG - scanning for sensors on trunks...
+2019-06-17 00:16:04,351 - temp reader - INFO - Rescanning devices on trunks
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00,  7.81trunsk/s] 2019-06-17 00:16:05,261 - temp reader - INFO - sensors per trunks:
++------------+---------------+
+| Trunk Name | Sensors Count |
++------------+---------------+
+| Trunk-2    | 1             |
++------------+---------------+
 
---==Bulk data processing commands==--
-Trunk #1 [0 device(s)]:
-Trunk #2 [1 device(s)]:
-        [0]:    24.31 C [ number: 28fffd7f90150155 ]
-Trunk #3 [0 device(s)]:
-Trunk #4 [0 device(s)]:
-Trunk #5 [0 device(s)]:
-Trunk #6 [0 device(s)]:
-Trunk #7 [0 device(s)]:
+2019-06-17 00:16:05,262 - temp reader - INFO - bulk data processing commands
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:01<00:00,  5.27trunks/s] 2019-06-17 00:16:06,616 - temp reader - INFO - data for Trunk-2:
++-------+-------------+------------------+
+| Index | Temperature | Address          |
++-------+-------------+------------------+
+| 0     | 29.12       | 28ff0930901504a9 |
++-------+-------------+------------------+
 
---==Simple data processing commands==--
-Trunk #1 [0 device(s)]:
-Trunk #2 [1 device(s)]:
-        [0]:    24.31 C [ number: 28fffd7f90150155 ]
-Trunk #3 [0 device(s)]:
-Trunk #4 [0 device(s)]:
-Trunk #5 [0 device(s)]:
-Trunk #6 [0 device(s)]:
-Trunk #7 [0 device(s)]:
+2019-06-17 00:16:06,617 - temp reader - INFO - simple data processing commands
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 32.11trunk/s] 2019-06-17 00:16:06,840 - temp reader - INFO - data for Trunk-2:
++-------+-------------+------------------+
+| Index | Temperature | Address          |
++-------+-------------+------------------+
+| 0     | 29.12       | 28ff0930901504a9 |
++-------+-------------+------------------+
 
-Retrieving sensors count:
-        trunk #1 - 0
-        trunk #2 - 1
-        trunk #3 - 0
-        trunk #4 - 0
-        trunk #5 - 0
-        trunk #6 - 0
-        trunk #7 - 0
+2019-06-17 00:16:06,841 - temp reader - INFO - retrieving sensors count
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 10.56trunks/s] 2019-06-17 00:16:07,508 - temp reader - INFO - sensors per trunks:
++------------+---------------+
+| Trunk Name | Sensors Count |
++------------+---------------+
+| Trunk-2    | 1             |
++------------+---------------+
+
+2019-06-17 00:16:07,621 - temp reader - INFO - application finished
 ```
