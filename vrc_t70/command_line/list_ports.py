@@ -1,20 +1,10 @@
-import sys
-
-from loguru import logger
-
 import serial.tools.list_ports
+
+from .shared import init_logger
 
 
 def main():
-    logger.remove()
-
-    logger.add(
-        sys.stderr,
-        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} {message}",
-        level="INFO",
-        backtrace=True,
-        diagnose=True
-    )
+    logger = init_logger()
 
     ports = serial.tools.list_ports.comports()
     logger.info("found {} port(s)".format(len(ports)))

@@ -1,9 +1,6 @@
 import binascii
 import random
-import sys
 from collections import defaultdict, namedtuple
-
-from loguru import logger
 
 import serial
 
@@ -15,25 +12,13 @@ from tqdm import tqdm
 
 from vrc_t70 import MAX_TRUNKS_COUNT, VrcT70Communicator
 
+from .shared import init_logger
+
 
 SensorTemperatureData = namedtuple(
     typename="SensorData",
     field_names=["sensor_address", "temperature", "trunk_number", "sensor_index"]
 )
-
-
-def init_logger(log_level="INFO"):
-    logger.remove()
-
-    logger.add(
-        sys.stderr,
-        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} {message}",
-        level=log_level,
-        backtrace=True,
-        diagnose=True
-    )
-
-    return logger
 
 
 def print_sensors_per_trunk_count(sensors_count_per_trunk, logger, skip_empty_trunks = True):
@@ -94,6 +79,7 @@ def print_sensors_data(sensors_data, logger):
 
 def main():
     args = get_args()
+
     logger = init_logger()
     logger.debug("app started")
 

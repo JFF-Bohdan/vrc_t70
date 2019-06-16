@@ -1,8 +1,5 @@
-import sys
 import time
 from collections import namedtuple
-
-from loguru import logger
 
 import serial
 
@@ -14,6 +11,7 @@ from tqdm import tqdm, trange
 
 from vrc_t70 import VrcT70Communicator
 
+from .shared import init_logger
 
 FoundDeviceData = namedtuple("FoundDeviceData", ["seconds_elapsed", "device_address"])
 
@@ -25,15 +23,7 @@ def main():
 
     total_devices_count = 0
 
-    logger.remove()
-
-    logger.add(
-        sys.stderr,
-        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} {message}",
-        level="INFO",
-        backtrace=True,
-        diagnose=True
-    )
+    logger = init_logger()
 
     logger.info("Searching...")
     communicator = VrcT70Communicator(uart)
@@ -55,7 +45,8 @@ def main():
                 targets_range.postfix[0]["devices"] = len(found_devices)
                 targets_range.update()
 
-            except Exception as _:
+            except BaseException as e:
+                # DO NOT ADD nothing here, we suppressing exceptions for pretty output
                 pass
 
     found_devices = sorted(found_devices, key=(lambda x: x.device_address))
@@ -64,7 +55,7 @@ def main():
         result_table_data.append(
             [
                 round(item.seconds_elapsed, 2),
-                "0x{:02x}".format(item.device_address)
+                "{0} [0x{0:02x}]".format(item.device_address)
             ]
         )
 

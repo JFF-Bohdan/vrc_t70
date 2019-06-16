@@ -1,3 +1,4 @@
+-r requirements_for_tools.txt
 crcmod==1.7
 pyserial==3.4
 git+https://github.com/Delgan/loguru.git#egg=loguru==0.2.5
