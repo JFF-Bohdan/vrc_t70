@@ -1,5 +1,5 @@
 SHELL=C:/Windows/System32/cmd.exe
-ENV = env
+ENV = venv
 PYBIN = $(ENV)/scripts
 PYTHON = $(PYBIN)/python
 PIP = $(PYBIN)/pip
@@ -36,12 +36,11 @@ tests:
 
 .PHONY: validate_package
 validate_package: tests
-	$(PYTHON) setup.py test
 	$(PYTHON) setup.py check
 
 .PHONY: build_package
 build_package: tests validate_package
-	$(PYTHON) setup.py sdist bdist_wheel
+	$(PYTHON) setup.py sdist
 
 .PHONY: coverage
 coverage:
@@ -75,5 +74,4 @@ local_install:
 
 .PHONY: develop_install
 develop_install:
-	$(PYTHON) setup.py install
-	 python setup.py develop
+	$(PYTHON) setup.py develop

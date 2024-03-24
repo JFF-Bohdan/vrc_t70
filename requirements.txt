@@ -1,3 +1,10 @@
--r requirements_for_tools.txt
 crcmod==1.7
-pyserial==3.4
+pyserial==3.5
+ConfigArgParse==1.7
+click==8.1.7
+
+
+#
+
+terminaltables==3.1.10
+tqdm==4.66.2

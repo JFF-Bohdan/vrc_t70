@@ -11,7 +11,13 @@ PACKAGE_NAME = "vrc_t70"
 
 README_FILE = "README.md"
 install_reqs = parse_requirements("requirements.txt", session=False)
-requirements = [str(ir.req) for ir in install_reqs]
+
+try:
+    requirements = [str(ir.req) for ir in install_reqs]
+except:
+    requirements = [str(ir.requirement) for ir in install_reqs]
+
+
 hyphen_package_name = PACKAGE_NAME.replace("_", "-")
 
 
@@ -30,21 +36,20 @@ if __name__ == "__main__":
 
     setup(
         name=PACKAGE_NAME,
-        packages=packages,
         version=__version__,
-        description="Module to support VRC-T70 hardware",
-        long_description="Please read https://github.com/JFF-Bohdan/vrc_t70/blob/master/README.md for information",
         author="Bohdan Danishevsky",
         author_email="dbn@aminis.com.ua",
-        url="http://github.com/JFF-Bohdan/vrc_t70",
-        keywords=["VRC-T70", "thermo sensors", "DS18B20"],
-        setup_requires=["pytest-runner"],
-        tests_require=["pytest"],
-        install_requires=requirements,
-        classifiers=[],
         license="MIT",
+        description="Module to support VRC-T70 hardware",
+        long_description="Please read https://github.com/JFF-Bohdan/vrc_t70/blob/master/README.md for information",
+        keywords=["VRC-T70", "thermo sensors", "DS18B20"],
+        url="http://github.com/JFF-Bohdan/vrc_t70",
+        platforms="all",
+        classifiers=[],
+        packages=packages,
+        install_requires=requirements,
         zip_safe=False,
-        entry_points = {
+        entry_points={
             "console_scripts": [
                 "find_devices=vrc_t70.command_line.find_devices:main",
                 "get_temperatures=vrc_t70.command_line.get_temperatures:main",
