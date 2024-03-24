@@ -2,29 +2,27 @@
 
 ![](https://travis-ci.org/JFF-Bohdan/vrc_t70.svg?branch=master)	
 
-Documentation, samples and tools for VRC-T70 controller.
+Documentation, samples and tools for support of VRC-T70 controller.
 
 This repository contains:
 
-* General information about controller;
-* Protocol;
-* Python library which can be used for communication with controller;
-* Tools and examples that uses Python library to to get current sensors data and 
+- General information about controller.
+- Protocol Description.
+- Python library which can be used for communication with a VRC-T70 controller;
+- Tools and examples that would use a Python library to get current sensors data and 
 servicing functionality.
-
-**RU:** документация, примеры и утилиты для работы с контроллером VRC-T70.
-Русская версия документации может быть найдена в [./doc/README_ru.md](./doc/README_ru.md)
 
 ## General information
 
-VRC-T70 controller able to communicate with up to 70
+VRC-T70 is a controller able to communicate with up to 70
 widely known [DS18B20](https://www.google.com.ua/search?q=ds18b20%20tech%20spec)
-sensors, divided for 7 trunks.
+sensors, divided in 7 trunks.
 
-Each trunk can contain up to 10 sensors, connected using [1-Wire](https://en.wikipedia.org/wiki/1-Wire) bus. 
+Each trunk can contain up to 10 DS18B20sensors, connected 
+using [1-Wire](https://en.wikipedia.org/wiki/1-Wire) bus. 
 
-Controller can be connected to master device (for example computer or other controller) using
-[RS485](https://en.wikipedia.org/wiki/RS-485) bus. One RS485 network can contain many VRC-T70 
+Controller can be connected to main device (for example PC or any other controller) using
+[RS485](https://en.wikipedia.org/wiki/RS-485) bus. One RS485 network can contain multiple VRC-T70 
 devices, so real count of connected DS18B20 can be huge and fit your requirements.
 
 ### Protocol
@@ -32,20 +30,19 @@ devices, so real count of connected DS18B20 can be huge and fit your requirement
 VRC-T70 device communicates using open protocol, which documented in
 [./doc/protocol/protocol_en.md](./doc/protocol/protocol_en.md)
 
-## Packgage and tools
+## Package and tools
 
 ### General information
 
-This repository contains `vrc_t70` package that can be used in
-your Python Program to communicate with VRC-T70 device.
-Also, it contains some tools which can be useful when using VRC-T70
-controller.
+This repository contains `vrc_t70` library that can be used in your Python Program 
+to communicate with VRC-T70 device(s). Also, it contains some tools which can be useful 
+when using VRC-T70 controller and can be used as example of an application based on `vrc_t70` library. 
 
 Available tools:
 
-* tool for available ports listing;
-* tool for devices searching on RS-485 bus;
-* tool for temperature information gathering.
+- Tool for available ports listing.
+- Tool for devices searching on a RS-485 bus.
+- Tool for temperature information gathering.
 
 ### Installation
 
@@ -61,21 +58,31 @@ pip install -e git+https://github.com/JFF-Bohdan/vrc_t70@master#egg=vrc_t70
 
 #### General information
 
-Tools can be used only after VRC-T70 package installation.
+Tools can be used only after VRC-T70 package would be installed.
 
-Example outputs may be outdated. Command line example is actual.
+Example outputs in this document may be outdated. Command line examples are revelant and up to date.
 
 #### List all available ports
 
 You can find information about all available COM ports in your system
-by executing: `list_ports`
+by executing: 
+
+```shell
+vrc-t70 list-ports
+```
 
 Sample output:
 
 ```
-> list_ports
-2019-06-17 00:03:29,332 - ports lister - INFO - found 1 ports
-2019-06-17 00:03:29,333 - ports lister - INFO -         [0] = 'COM15' ('USB Serial Port (COM15)')
+$ vrc-t70 list-ports
+2024-03-24 22:32:10.139 | INFO     | vrc_t70.cli_tools.list_ports:list_ports:15 - Looking for available COM ports ...
+2024-03-24 22:32:10.148 | INFO     | vrc_t70.cli_tools.list_ports:list_ports:22 - Found 1 port(s)
+2024-03-24 22:32:10.151 | INFO     | vrc_t70.cli_tools.list_ports:list_ports:43 - Available devices:
++---+------+-------------+------+-------+---------------+--------------+------------------------+
+| # | Name | Device name | VID  | PID   | Serial number | Manufacturer | Description            |
++---+------+-------------+------+-------+---------------+--------------+------------------------+
+| 0 | COM4 | COM4        | 1027 | 24577 | A50285BIA     | FTDI         | USB Serial Port (COM4) |
++---+------+-------------+------+-------+---------------+--------------+------------------------+
 ```
 
 #### Find device address

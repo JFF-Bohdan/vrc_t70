@@ -2,7 +2,7 @@ crcmod==1.7
 pyserial==3.5
 ConfigArgParse==1.7
 click==8.1.7
-
+loguru==0.7.2
 
 #
 

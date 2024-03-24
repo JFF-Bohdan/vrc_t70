@@ -53,7 +53,7 @@ if __name__ == "__main__":
             "console_scripts": [
                 "find_devices=vrc_t70.command_line.find_devices:main",
                 "get_temperatures=vrc_t70.command_line.get_temperatures:main",
-                "list_ports=vrc_t70.command_line.list_ports:main"
+                "vrc-t70=vrc_t70.cli_tools.cli:cli",
             ],
         }
     )
