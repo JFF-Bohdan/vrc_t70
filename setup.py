@@ -14,7 +14,7 @@ install_reqs = parse_requirements("requirements.txt", session=False)
 
 try:
     requirements = [str(ir.req) for ir in install_reqs]
-except:
+except AttributeError:
     requirements = [str(ir.requirement) for ir in install_reqs]
 
 
@@ -51,8 +51,6 @@ if __name__ == "__main__":
         zip_safe=False,
         entry_points={
             "console_scripts": [
-                "find_devices=vrc_t70.command_line.find_devices:main",
-                "get_temperatures=vrc_t70.command_line.get_temperatures:main",
                 "vrc-t70=vrc_t70.cli_tools.cli:cli",
             ],
         }

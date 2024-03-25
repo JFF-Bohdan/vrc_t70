@@ -1,0 +1,22 @@
+import enum
+
+
+class RequestCodes(enum.IntEnum):
+    """
+    All request codes used in protocol with VRC-T70 controller
+    """
+
+    PING = 0x01
+    GET_TEMPERATURE_OF_SENSOR_ON_TRUNK = 0x02
+    GET_TEMPERATURES_ON_TRUNK = 0x03
+    GET_SENSOR_UNIQUE_ADDRESS_ON_TRUNK = 0x04
+    GET_SENSORS_UNIQUE_ADDRESS_ON_TRUNK = 0x05
+    SET_SESSION_ID = 0x06
+    GET_SESSION_ID = 0x07
+    SET_CONTROLLER_NEW_ADDRESS = 0x08
+    RESCAN_SENSORS_ON_TRUNK = 0x09
+    GET_SENSORS_COUNT_ON_TRUNK = 0x0A
+
+    @staticmethod
+    def all_known_codes() -> list[int]:
+        return [e.value for e in RequestCodes]

@@ -28,7 +28,7 @@ devices, so real count of connected DS18B20 can be huge and fit your requirement
 ### Protocol
 
 VRC-T70 device communicates using open protocol, which documented in
-[./doc/protocol/protocol_en.md](./doc/protocol/protocol_en.md)
+[./doc/protocol/protocol_en.md](./doc/protocol_en.md)
 
 ## Package and tools
 

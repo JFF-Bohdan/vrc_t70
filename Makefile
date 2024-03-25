@@ -32,7 +32,7 @@ help:
 
 .PHONY: tests
 tests:
-	$(PYTEST) $(TESTDIR) -vv
+	$(PYTEST) $(TESTDIR) -vvv
 
 .PHONY: validate_package
 validate_package: tests
