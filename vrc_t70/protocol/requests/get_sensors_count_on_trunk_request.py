@@ -13,7 +13,7 @@ class GetSensorsCountOnTrunkRequest(base_request.BaseRequest):
             trunk_number: int,
             address: typing.Optional[int] = None,
             sequence_id: typing.Optional[int] = None,
-            additional_wait_time_for_response: typing.Optional[float] = 0.0,
+            additional_wait_time_for_response: typing.Optional[float] = 0.2,
     ):
         limitations.validate_trunk_number(trunk_number)
 

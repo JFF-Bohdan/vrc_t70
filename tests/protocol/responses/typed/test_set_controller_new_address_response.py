@@ -9,4 +9,3 @@ def test_can_parse_set_controller_new_address_response():
     response = set_controller_new_address_response.SetControllerNewAddressResponse(raw_response=raw_response)
 
     assert response.new_address == 42
-

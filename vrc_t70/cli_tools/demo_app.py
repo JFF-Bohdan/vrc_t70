@@ -8,18 +8,19 @@ import humanize
 
 from loguru import logger
 
+import terminaltables
+
 from vrc_t70 import limitations
 from vrc_t70 import shared
 from vrc_t70.cli_tools import basic_arg_parser
 from vrc_t70.communicator import communicator
 
 DESIRED_SESSION_ID_1 = 0xdeadbeef
-DESIRED_SESSION_ID_2 = 0xabadbabe
+DESIRED_SESSION_ID_2 = 0xcafebabe
 
 
 @dataclasses.dataclass
 class TrunkInfo:
-
     sensors_count: int = 0
     sensors_addresses: dict[int, int] = dataclasses.field(default_factory=lambda: {})
     sensors_temperatures: dict[int, float] = dataclasses.field(default_factory=lambda: {})
@@ -148,6 +149,50 @@ def check_that_can_reconfigure_address(connection: communicator.VrcT70Communicat
     logger.debug("Checking that controller is accessible with old address")
 
 
+def print_scan_results(results: ScanResults):
+    scan_time = humanize.precisedelta(
+        results.time_elapsed,
+        minimum_unit="milliseconds", format="%0.2f"
+    )
+
+    info = results.info
+    logger.info(
+        f"Scan finished for controller 0x{info.address:02x} with session id 0x{info.session_id:04x} in {scan_time}"
+    )
+
+    header = ["Trunk", "Sensor index", "Sensor address", "Temperature"]
+    table_data = [header]
+
+    for trunk_number in range(limitations.MIN_TRUNK_NUMBER, limitations.MAX_TRUNK_NUMBER + 1):
+        trunk_info = info.trunks[trunk_number]
+        sensors_index = []
+        sensors_address = []
+        sensors_temperature = []
+
+        for sensor_index in range(trunk_info.sensors_count):
+            sensors_index.append(str(sensor_index))
+            sensors_address.append(f"{trunk_info.sensors_addresses[sensor_index]:08x}")
+            sensors_temperature.append(f"{trunk_info.sensors_temperatures[sensor_index]:0.2f}")
+
+        sensors_index = "\n".join(sensors_index) if sensors_index else "N/A"
+        sensors_address = "\n".join(sensors_address) if sensors_address else "N/A"
+        sensors_temperature = "\n".join(sensors_temperature) if sensors_temperature else "N/A"
+        table_data.append(
+            [
+                int(trunk_number),
+                sensors_index,
+                sensors_address,
+                sensors_temperature,
+            ]
+        )
+        # for sensor_index in range(trunk_info.sensors_count):
+
+    table = terminaltables.AsciiTable(table_data=table_data)
+    logger.info(f"Scan results:\n{table.table}")
+
+    pass
+
+
 @click.command(
     name="demo-app",
     context_settings=dict(ignore_unknown_options=True, allow_extra_args=True),
@@ -195,9 +240,11 @@ def demo_app(additional_args):
 
         logger.info(f"Sequential scan is finished in {sequential_scan_time_human_readable}")
         logger.info(f"Device info: {sequential_results.info}")
+        print_scan_results(sequential_results)
 
         logger.info(f"Batched scan is finished in {batched_scan_time_human_readable}")
         logger.info(f"Device info: {batched_results.info}")
+        print_scan_results(batched_results)
 
     finally:
         if uart:

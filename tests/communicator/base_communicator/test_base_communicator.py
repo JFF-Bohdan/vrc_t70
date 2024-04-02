@@ -1,4 +1,3 @@
-import itertools
 import typing
 from unittest import mock
 

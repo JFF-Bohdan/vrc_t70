@@ -1,4 +1,5 @@
 import math
+
 import pytest
 
 from vrc_t70 import shared
