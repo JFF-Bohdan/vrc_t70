@@ -5,12 +5,12 @@ import time
 import serial
 
 
-def init_serial(uart_name, uart_speed, wait_delay):
+def init_serial(port_name: str, baudrate: int, timeout: float):
     return serial.Serial(
-        uart_name,
-        baudrate=uart_speed,
+        port_name,
+        baudrate=baudrate,
         bytesize=serial.EIGHTBITS,
-        timeout=wait_delay,
+        timeout=timeout,
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE
     )

@@ -34,7 +34,7 @@ def deserialize(
     crc = crc_func(data[:-1])
 
     if crc != data[-1]:
-        raise exceptions.ErrorWrongCrc()
+        raise exceptions.ErrorWrongCrc("Wrong CRC in response")
 
     sequence_id = (data[0x02] << 8) | data[0x03]
 

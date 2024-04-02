@@ -12,6 +12,7 @@ class SetSessionIdRequest(base_request.BaseRequest):
             session_id: int,
             address: typing.Optional[int] = None,
             sequence_id: typing.Optional[int] = None,
+            additional_wait_time_for_response: typing.Optional[float] = 0.250,
     ):
         session_id = session_id & 0xffffffff
         super().__init__(
@@ -25,5 +26,6 @@ class SetSessionIdRequest(base_request.BaseRequest):
                     (session_id & 0xff00) >> 8,
                     session_id & 0xff
                 ]
-            )
+            ),
+            additional_wait_time_for_response=additional_wait_time_for_response,
         )

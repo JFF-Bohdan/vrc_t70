@@ -1,6 +1,7 @@
 import binascii
 import copy
 import time
+import typing
 
 from loguru import logger
 
@@ -44,16 +45,22 @@ class BaseVrcT70Communicator:
         self._max_symbol_wait_time = shared.default_wait_time_for_symbol(self.port.baudrate)
 
         self.raise_exception_on_response_with_wrong_address = False
+        self.min_wait_time_for_response = 0.075
 
     def _communicate(self, request: base_request.BaseRequest) -> base_response.BaseResponse:
+        """
+        Sends request to a controller and then receives response and creates typed
+        class which represents response
+        """
         for attempt in range(1, self.requests_retries_count + 1):
             self._make_delay_before_request()
 
             try:
                 request = self._prepare_request(request)
-
                 self._send_request(request, attempt=attempt)
-                raw_response = self._read_response(request.request_id)
+                raw_response = self._read_response(
+                    additional_wait_time_for_response=request.additional_wait_time_for_response
+                )
                 logger.debug(f"Decoded response: {raw_response}")
 
                 if raw_response.address != request.address:
@@ -68,7 +75,6 @@ class BaseVrcT70Communicator:
                             expected_address=request.address
                         )
 
-                    self.port.flush()
                     continue
 
                 if raw_response.sequence_id != request.sequence_id:
@@ -81,11 +87,12 @@ class BaseVrcT70Communicator:
                 return self._responses_factory.create(raw_response=raw_response)
             except exceptions.ErrorResponseFromControllerWithWrongAddress:
                 raise
-            except exceptions.ErrorBaseVrcT70:
-                self.port.flush()
+            except exceptions.ErrorBaseVrcT70 as e:
+                logger.warning(f"Error communicating with controller (type={type(e)}): {e}")
+                self.port.flushInput()
                 continue
 
-        raise exceptions.ErrorNoResponseFromController()
+        raise exceptions.ErrorNoResponseFromController("No response from controller")
 
     def _send_request(self, request: base_request.BaseRequest, attempt: int):
         """
@@ -103,7 +110,10 @@ class BaseVrcT70Communicator:
         if self.sequence_id > limitations.MAX_SEQUENCE_ID:
             self.sequence_id = limitations.MIN_SEQUENCE_ID
 
-    def _read_response(self, expected_event_id: int) -> raw_response_data.RawResponseData:
+    def _read_response(
+            self,
+            additional_wait_time_for_response: typing.Optional[float] = None
+    ) -> raw_response_data.RawResponseData:
         # 1 byte - device address
         # 1 byte - id event
         # 2 bytes - sequence id
@@ -112,7 +122,15 @@ class BaseVrcT70Communicator:
         # N bytes - data,
         # 1 bytes - crc 8
         expected_bytes_count = 7
-        raw_bytes = self._read(expected_bytes_count)
+        additional_wait_time_for_response = 0.0 if additional_wait_time_for_response < 0.0 \
+            else additional_wait_time_for_response
+        if additional_wait_time_for_response < self.min_wait_time_for_response:
+            additional_wait_time_for_response = self.min_wait_time_for_response
+
+        raw_bytes, spent_time = self._read(expected_bytes_count, additional_wait_time_for_response)
+        additional_wait_time_for_response -= spent_time
+        additional_wait_time_for_response = 0.0 if additional_wait_time_for_response < 0.0 \
+            else additional_wait_time_for_response
 
         # Attempting to read packet with length 7, which would be a packet without any data
         # In case we would have a response with payload, we would read additional necessary data in a moment
@@ -124,7 +142,7 @@ class BaseVrcT70Communicator:
 
         payload_length = raw_bytes[5]
         if payload_length:
-            payload = self._read(payload_length)
+            payload, _ = self._read(payload_length, additional_wait_time_for_response)
             raw_bytes = raw_bytes + payload
 
         debug_data = binascii.hexlify(raw_bytes).decode("ascii")
@@ -152,17 +170,20 @@ class BaseVrcT70Communicator:
         while sent_bytes < total_length:
             sent_bytes += self.port.write(data[sent_bytes: total_length])
 
+        self.port.flushOutput()
         return sent_bytes
 
-    def _read(self, bytes_needed: int) -> bytes:
-        max_wait_time = 0.1 + bytes_needed * self._max_symbol_wait_time
+    def _read(self, bytes_needed: int, additional_wait_time_for_response: float) -> tuple[bytes, float]:
+        max_wait_time = bytes_needed * self._max_symbol_wait_time + additional_wait_time_for_response
+        logger.debug(f"Max wait time for reading is: {round(max_wait_time, 3)}")
         result = bytes()
 
-        timestamp_start = time.monotonic()
-        while (len(result) != bytes_needed) and ((time.monotonic() - timestamp_start) <= max_wait_time):
+        timestamp_begin = time.monotonic()
+        while (len(result) != bytes_needed) and ((time.monotonic() - timestamp_begin) <= max_wait_time):
             result += self.port.read(bytes_needed - len(result))
 
-        return result
+        time_spent = time.monotonic() - timestamp_begin
+        return result, time_spent
 
     def _prepare_request(self, request: base_request.BaseRequest) -> base_request.BaseRequest:
         request = copy.deepcopy(request)

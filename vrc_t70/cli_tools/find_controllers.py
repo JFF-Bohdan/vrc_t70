@@ -140,9 +140,9 @@ def find_controllers(additional_args):
     try:
         logger.info("Opening port ...")
         uart = shared.init_serial(
-            uart_name=args.port,
-            uart_speed=args.speed,
-            wait_delay=timeout
+            port_name=args.port,
+            baudrate=args.baudrate,
+            timeout=timeout
         )
         port_successfully_opened = True
 

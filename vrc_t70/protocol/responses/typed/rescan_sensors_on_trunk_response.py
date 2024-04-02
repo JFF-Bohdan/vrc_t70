@@ -19,4 +19,5 @@ class RescanSensorsOnTrunkResponse(base_response.BaseResponse):
         self.trunk_number = self.raw_response.payload[0]
 
         self.sensors_count = self.raw_response.payload[1]
-        limitations.validate_sensor_index(self.sensors_count - 1)
+        if self.sensors_count:
+            limitations.validate_sensor_index(self.sensors_count - 1)

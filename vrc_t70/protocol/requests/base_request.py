@@ -6,7 +6,7 @@ from vrc_t70 import exceptions
 
 class BaseRequest:
     """
-    Base class used to represent VRC-T70 requests
+    Base class used to represent requests to VRC-T70
     """
     def __init__(
             self,
@@ -14,13 +14,15 @@ class BaseRequest:
             address: typing.Optional[int] = None,
             sequence_id: typing.Optional[int] = None,
             data: typing.Union[bytes, bytearray, None, list[int]] = None,
-            crc_func: typing.Optional[typing.Callable] = None
+            crc_func: typing.Optional[typing.Callable] = None,
+            additional_wait_time_for_response: typing.Optional[float] = None,
     ):
         self.address = address
         self.request_id = request_id
         self.sequence_id = sequence_id
         self.data = bytes(data) if data is not None else None
         self.crc_func = crc_func if crc_func else crc.default_vrc_t70_crc()
+        self.additional_wait_time_for_response = additional_wait_time_for_response
 
     def __bytes__(self):
         """

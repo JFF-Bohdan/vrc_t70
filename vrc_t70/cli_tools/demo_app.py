@@ -42,7 +42,6 @@ def sequential_scan(
         connection: communicator.VrcT70Communicator,
         address: int
 ) -> ScanResults:
-
     timestamp_begin = time.monotonic()
 
     scan_info = VrcT70DeviceInfo(address=address)
@@ -163,7 +162,7 @@ def demo_app(additional_args):
     uart = None
     try:
         logger.info("Opening port ...")
-        uart = shared.init_serial(args.port, args.speed, args.timeout)
+        uart = shared.init_serial(args.port, args.baudrate, args.timeout)
 
         connection = communicator.VrcT70Communicator(
             port=uart,
@@ -172,7 +171,7 @@ def demo_app(additional_args):
 
         connection.ping()
         logger.info("Performing test to check if can reconfigure controller address")
-        check_that_can_reconfigure_address(connection=connection)
+        # check_that_can_reconfigure_address(connection=connection)
 
         # Retrieving all information using sequential operations
         sequential_results = sequential_scan(

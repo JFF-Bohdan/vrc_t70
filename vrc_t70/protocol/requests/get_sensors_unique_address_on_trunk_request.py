@@ -13,6 +13,7 @@ class GetSensorsUniqueAddressOnTrunkRequest(base_request.BaseRequest):
             trunk_number: int,
             address: typing.Optional[int] = None,
             sequence_id: typing.Optional[int] = None,
+            additional_wait_time_for_response: typing.Optional[float] = 0.0,
     ):
         limitations.validate_trunk_number(trunk_number)
 
@@ -20,5 +21,6 @@ class GetSensorsUniqueAddressOnTrunkRequest(base_request.BaseRequest):
             address=address,
             request_id=request_codes.RequestCodes.GET_SENSORS_UNIQUE_ADDRESS_ON_TRUNK,
             sequence_id=sequence_id,
-            data=bytes([trunk_number])
+            data=bytes([trunk_number]),
+            additional_wait_time_for_response=additional_wait_time_for_response,
         )

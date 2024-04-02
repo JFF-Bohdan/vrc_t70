@@ -27,9 +27,9 @@ def create_basic_parser(auto_env_var_prefix=None) -> configargparse.ArgumentPars
 
     parser.add_argument(
         "-s",
-        "--speed",
+        "--baudrate",
         action="store",
-        help="UART port speed",
+        help="UART port baudrate",
         type=int,
         default=defaults.DEFAULT_PORT_SPEED
     )
@@ -49,7 +49,7 @@ def create_basic_parser(auto_env_var_prefix=None) -> configargparse.ArgumentPars
         action="store",
         type=int,
         help="UART timeout",
-        default=None
+        default=defaults.DEFAULT_TIMEOUT
     )
 
     return parser

@@ -14,6 +14,7 @@ class GetTemperatureOfSensorOnTrunkRequest(base_request.BaseRequest):
             sensor_index: int,
             address: typing.Optional[int] = None,
             sequence_id: typing.Optional[int] = None,
+            additional_wait_time_for_response: typing.Optional[float] = 0.0,
     ):
         limitations.validate_trunk_number(trunk_number)
         limitations.validate_sensor_index(sensor_index)
@@ -22,5 +23,6 @@ class GetTemperatureOfSensorOnTrunkRequest(base_request.BaseRequest):
             address=address,
             request_id=request_codes.RequestCodes.GET_TEMPERATURE_OF_SENSOR_ON_TRUNK,
             sequence_id=sequence_id,
-            data=bytes([trunk_number, sensor_index])
+            data=bytes([trunk_number, sensor_index]),
+            additional_wait_time_for_response=additional_wait_time_for_response,
         )
