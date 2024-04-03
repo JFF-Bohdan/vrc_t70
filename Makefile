@@ -46,6 +46,7 @@ build_package: tests validate_package
 coverage:
 	$(PYTEST) $(TESTDIR) -vv --cov=$(MODULE_NAME)
 	$(COVERAGE) html
+	echo All good
 
 .PHONY: lint
 lint:
