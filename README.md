@@ -1,6 +1,6 @@
 # vrc_t70
 
-![](https://travis-ci.org/JFF-Bohdan/vrc_t70.svg?branch=master)	
+![](https://travis-ci.org/JFF-Bohdan/vrc_t70.svg?branch=master)
 
 Documentation, samples and tools for support of VRC-T70 controller.
 
@@ -9,7 +9,7 @@ This repository contains:
 - General information about controller.
 - Protocol Description.
 - Python library which can be used for communication with a VRC-T70 controller;
-- Tools and examples that would use a Python library to get current sensors data and 
+- Tools and examples that would use a Python library to get current sensors data and
 servicing functionality.
 
 ## General information
@@ -18,11 +18,11 @@ VRC-T70 is a controller able to communicate with up to 70
 widely known [DS18B20](https://www.google.com.ua/search?q=ds18b20%20tech%20spec)
 sensors, divided in 7 trunks.
 
-Each trunk can contain up to 10 DS18B20sensors, connected 
-using [1-Wire](https://en.wikipedia.org/wiki/1-Wire) bus. 
+Each trunk can contain up to 10 DS18B20sensors, connected
+using [1-Wire](https://en.wikipedia.org/wiki/1-Wire) bus.
 
 Controller can be connected to main device (for example PC or any other controller) using
-[RS485](https://en.wikipedia.org/wiki/RS-485) bus. One RS485 network can contain multiple VRC-T70 
+[RS485](https://en.wikipedia.org/wiki/RS-485) bus. One RS485 network can contain multiple VRC-T70
 devices, so real count of connected DS18B20 can be huge and fit your requirements.
 
 ### Protocol
@@ -34,9 +34,9 @@ VRC-T70 device communicates using open protocol, which documented in
 
 ### General information
 
-This repository contains `vrc_t70` library that can be used in your Python Program 
-to communicate with VRC-T70 device(s). Also, it contains some tools which can be useful 
-when using VRC-T70 controller and can be used as example of an application based on `vrc_t70` library. 
+This repository contains `vrc_t70` library that can be used in your Python Program
+to communicate with VRC-T70 device(s). Also, it contains some tools which can be useful
+when using VRC-T70 controller and can be used as example of an application based on `vrc_t70` library.
 
 Available tools:
 
@@ -65,7 +65,7 @@ Example outputs in this document may be outdated. Command line examples are reve
 #### List all available ports
 
 You can find information about all available COM ports in your system
-by executing: 
+by executing:
 
 ```shell
 vrc-t70 list-ports
@@ -88,7 +88,7 @@ $ vrc-t70 list-ports
 #### Find device address
 
 You can scan RS-485 network for VRC-T70 devices using `find_devices` tool. It
-will ping all devices with addresses from `0x01` up to `0xfe` and will log information 
+will ping all devices with addresses from `0x01` up to `0xfe` and will log information
 about all devices online.
 
 Example command line (find devices with any address, can take ~1.5 minutes for execution):
@@ -98,7 +98,7 @@ Example command line (find devices with any address, can take ~1.5 minutes for e
 Where:
 
 * `--uart com15` - specifies uart name. In this case `COM15` in Windows;
-* `--delay 0.1` - specifis delay of `0.1` second before sending ping request to 
+* `--delay 0.1` - specifis delay of `0.1` second before sending ping request to
 device with next address.
 
 Example:
@@ -128,7 +128,7 @@ in this case script found one device with address `0x01.`
 
 #### Get temperatures of all sensors linked to the device
 
-You can get information about all temperatures on all connected sensors on all trunks 
+You can get information about all temperatures on all connected sensors on all trunks
 using `get_temperatures`. Command line example:
 
 `get_temperatures --uart com15 --address 1 --speed 115200`
@@ -137,7 +137,7 @@ Where:
 
 * `--uart com15` - specifies uart name. In this case `COM15` in Windows;
 * `--address 1` - specifies device address - `0x01`;
-* `--speed 115200` - specifies uart speed, `115200` if default device speed, so you can 
+* `--speed 115200` - specifies uart speed, `115200` if default device speed, so you can
 skip this parameter.
 
 

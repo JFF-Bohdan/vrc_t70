@@ -50,7 +50,7 @@ coverage:
 .PHONY: lint
 lint:
 	$(PYFLAKE8)
-	
+
 .PHONY: flake8
 flake8:
 	$(PYFLAKE8)
