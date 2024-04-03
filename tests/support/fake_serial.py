@@ -49,3 +49,9 @@ class FakeSerial:
 
     def flush(self):
         self.flush_call_qty += 1
+
+    def flushOutput(self):
+        pass
+
+    def flushInput(self):
+        pass
