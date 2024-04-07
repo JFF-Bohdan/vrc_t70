@@ -1,8 +1,11 @@
 import datetime
 import struct
 import time
+import typing
 
 import serial
+
+from vrc_t70 import limitations
 
 
 def init_serial(port_name: str, baudrate: int, timeout: float):
@@ -32,3 +35,25 @@ def decode_float(data: bytes) -> float:
     Decodes 32 bits float from 4 bytes representing float in big endian
     """
     return struct.unpack("<f", data)
+
+
+def trunks_indexes() -> typing.Generator[int, None, None]:
+    """
+    Helper that returns generator for trunks numbers.
+
+    Instead of
+
+    ```
+    for trunk_number in range(limitations.MIN_TRUNK_NUMBER, limitations.MAX_TRUNK_NUMBER + 1):
+        pass
+    ```
+
+    You can just use:
+
+    ```
+    for trunk_number in trunks_indexes():
+        pass
+    ```
+
+    """
+    return range(limitations.MIN_TRUNK_NUMBER, limitations.MAX_TRUNK_NUMBER + 1)

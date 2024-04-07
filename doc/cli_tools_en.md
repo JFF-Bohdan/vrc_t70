@@ -80,13 +80,13 @@ to communicate with VRC-T70 device.
 Example command line:
 
 ```
-$ vrc-t70 demo-app --port com4 --address 1
+$ vrc-t70 demo-app-1 --port com4 --address 1
 ```
 
 Example output:
 
 ```
-$ vrc-t70 demo-app --port com4 --address 1
+$ vrc-t70 demo-app-1 --port com4 --address 1
 
 <skipped>
 

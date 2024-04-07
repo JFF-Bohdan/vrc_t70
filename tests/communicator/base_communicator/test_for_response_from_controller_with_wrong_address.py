@@ -36,7 +36,7 @@ def test_ignores_response_from_controller_with_wrong_address_and_gets_correct_on
         address=0x08,
         sequence_id=0x2233,
     )
-    response = communicator._communicate(get_session_id_request.GetSessionIdRequest())
+    response = communicator.communicate(get_session_id_request.GetSessionIdRequest())
     response = typing.cast(get_session_id_response.GetSessionIdResponse, response)
     assert response.session_id == 0xdeadbeef
     assert fake_port.written_data == [common_packets.GET_SESSION_ID_REQUEST] * 2
@@ -54,7 +54,7 @@ def test_raises_exception_on_response_from_controller_with_wrong_address():
     )
     communicator.raise_exception_on_response_with_wrong_address = True
     with pytest.raises(exceptions.ErrorResponseFromControllerWithWrongAddress) as e:
-        _ = communicator._communicate(get_session_id_request.GetSessionIdRequest())
+        _ = communicator.communicate(get_session_id_request.GetSessionIdRequest())
         assert e.unexpected_address == 1
         assert e.expected_address == 8
 
@@ -69,4 +69,4 @@ def test_raises_exception_when_no_response_from_expected_controller():
         sequence_id=0x2233,
     )
     with pytest.raises(exceptions.ErrorNoResponseFromController):
-        _ = communicator._communicate(get_session_id_request.GetSessionIdRequest())
+        _ = communicator.communicate(get_session_id_request.GetSessionIdRequest())

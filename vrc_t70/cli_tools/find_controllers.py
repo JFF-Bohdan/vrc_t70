@@ -1,5 +1,3 @@
-import functools
-import signal
 import threading
 import time
 import typing
@@ -21,12 +19,8 @@ from vrc_t70 import exceptions
 from vrc_t70 import limitations
 from vrc_t70 import shared
 from vrc_t70.cli_tools import basic_arg_parser
+from vrc_t70.cli_tools import shared as cli_shared
 from vrc_t70.communicator import communicator
-
-
-def signal_handler(stop_event: threading.Event, signum, frame):
-    logger.warning("Search termination requested...")
-    stop_event.set()
 
 
 def extend_parser(parser: configargparse.ArgumentParser) -> configargparse.ArgumentParser:
@@ -117,8 +111,6 @@ def scan_for_controllers(
 )
 @click.argument("additional_args", nargs=-1, type=click.UNPROCESSED)
 def find_controllers(additional_args):
-    scan_terminated_by_user = threading.Event()
-
     arg_parser = basic_arg_parser.create_basic_parser()
     arg_parser = extend_parser(arg_parser)
     args = arg_parser.parse_args(additional_args)
@@ -126,8 +118,8 @@ def find_controllers(additional_args):
     limitations.validate_controller_address(args.min, "Invalid min value for controller address, ")
     limitations.validate_controller_address(args.max, "Invalid max value for controller address, ")
 
-    partial_signal_handler = functools.partial(signal_handler, scan_terminated_by_user)
-    signal.signal(signal.SIGINT, partial_signal_handler)
+    scan_terminated_by_user = threading.Event()
+    cli_shared.register_interception_of_ctrl_c("Search termination requested...", scan_terminated_by_user)
 
     logger.info("Searching for controllers")
     timestamp_begin = time.monotonic()

@@ -1,9 +1,8 @@
 import binascii
 import copy
+import logging
 import time
 import typing
-
-from loguru import logger
 
 import serial
 
@@ -12,9 +11,10 @@ from vrc_t70 import exceptions
 from vrc_t70 import limitations
 from vrc_t70 import shared
 from vrc_t70.protocol.requests import base_request
-from vrc_t70.protocol.responses import base_response
-from vrc_t70.protocol.responses import raw_response_data
-from vrc_t70.protocol.responses import typed_responses_factory
+from vrc_t70.protocol.responses import base_response, raw_response_data, typed_responses_factory
+
+
+logger = logging.getLogger("vrct70.base_communicator")
 
 
 class BaseVrcT70Communicator:
@@ -47,7 +47,9 @@ class BaseVrcT70Communicator:
         self.raise_exception_on_response_with_wrong_address = False
         self.min_wait_time_for_response = 0.075
 
-    def _communicate(self, request: base_request.BaseRequest) -> base_response.BaseResponse:
+        self.validate_sequence_id = True
+
+    def communicate(self, request: base_request.BaseRequest) -> base_response.BaseResponse:
         """
         Sends request to a controller and then receives response and creates typed
         class which represents response
@@ -77,7 +79,7 @@ class BaseVrcT70Communicator:
 
                     continue
 
-                if raw_response.sequence_id != request.sequence_id:
+                if self.validate_sequence_id and (raw_response.sequence_id != request.sequence_id):
                     logger.warning(
                         f"Received response with wrong sequence id. "
                         f"Received {raw_response.sequence_id}, expected {request.sequence_id}"
@@ -88,7 +90,7 @@ class BaseVrcT70Communicator:
             except exceptions.ErrorResponseFromControllerWithWrongAddress:
                 raise
             except exceptions.ErrorBaseVrcT70 as e:
-                logger.warning(f"Error communicating with controller (type={type(e)}): {e}")
+                logger.debug(f"Can't communicate with controller (type={type(e)}): {e}")
                 self.port.flushInput()
                 continue
 

@@ -1,6 +1,5 @@
+import logging
 import typing
-
-from loguru import logger
 
 import serial
 
@@ -16,6 +15,9 @@ from vrc_t70.protocol.responses.typed import data_types, get_sensor_unique_addre
     get_sensors_count_on_trunk_response, get_sensors_unique_address_on_trunk_response, get_session_id_response, \
     get_temperature_of_sensor_on_trunk_response, get_temperatures_on_trunk_response, ping_response, \
     rescan_sensors_on_trunk_response, set_controller_new_address_response, set_session_id_response
+
+
+logger = logging.getLogger("vrct70.communicator")
 
 
 class VrcT70Communicator(base_communicator.BaseVrcT70Communicator):
@@ -53,9 +55,9 @@ class VrcT70Communicator(base_communicator.BaseVrcT70Communicator):
         response = typing.cast(get_session_id_response.GetSessionIdResponse, response)
         return response.session_id
 
-    def set_session_id(self, session_id: int) -> None:
+    def set_session_id(self, session_id: int) -> int:
         """
-        Used to set session id which is used to communicate with controller
+        Used to set session id which is used to communicate with controller. Returns new session id
         """
         logger.debug("Setting session id")
 
@@ -240,7 +242,7 @@ class VrcT70Communicator(base_communicator.BaseVrcT70Communicator):
         """
         Sends given request, retrieves response and then validates that response class is expected one
         """
-        response = super()._communicate(request)
+        response = super().communicate(request)
         logger.debug(f"Response type: {type(response)}")
 
         if not isinstance(response, expected_response_class):

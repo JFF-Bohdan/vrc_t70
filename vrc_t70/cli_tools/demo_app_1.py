@@ -190,16 +190,14 @@ def print_scan_results(results: ScanResults):
     table = terminaltables.AsciiTable(table_data=table_data)
     logger.info(f"Scan results:\n{table.table}")
 
-    pass
-
 
 @click.command(
-    name="demo-app",
+    name="demo-app-1",
     context_settings=dict(ignore_unknown_options=True, allow_extra_args=True),
     add_help_option=False
 )
 @click.argument("additional_args", nargs=-1, type=click.UNPROCESSED)
-def demo_app(additional_args):
+def demo_app_1(additional_args):
     arg_parser = basic_arg_parser.create_basic_parser()
     args = arg_parser.parse_args(additional_args)
     logger.info("Searching for controllers")

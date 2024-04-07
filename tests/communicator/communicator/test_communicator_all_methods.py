@@ -48,7 +48,8 @@ def test_can_get_and_set_different_session_id():
     session_id = comm.get_session_id()
     assert session_id == 0xdeadbeef
 
-    comm.set_session_id(session_id=0xcafebabe)
+    response_session_id = comm.set_session_id(session_id=0xcafebabe)
+    assert response_session_id == 0xcafebabe
 
     session_id = comm.get_session_id()
     assert session_id == 0xcafebabe

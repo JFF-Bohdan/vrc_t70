@@ -36,7 +36,8 @@ def test_ignores_response_with_wrong_sequence_id():
         address=0x08,
         sequence_id=0x2233,
     )
-    response = communicator._communicate(get_session_id_request.GetSessionIdRequest())
+    communicator.validate_sequence_id = True
+    response = communicator.communicate(get_session_id_request.GetSessionIdRequest())
     response = typing.cast(get_session_id_response.GetSessionIdResponse, response)
     assert response.session_id == 0xdeadbeef
     assert fake_port.written_data == [common_packets.GET_SESSION_ID_REQUEST] * 2
@@ -51,5 +52,23 @@ def test_raises_exception_when_no_response_with_expected_sequence_id():
         address=0x08,
         sequence_id=0x2233,
     )
+    communicator.validate_sequence_id = True
     with pytest.raises(exceptions.ErrorNoResponseFromController):
-        _ = communicator._communicate(get_session_id_request.GetSessionIdRequest())
+        _ = communicator.communicate(get_session_id_request.GetSessionIdRequest())
+
+
+def test_accept_response_with_wrong_sequence_id_when_configured_to_ignore_this():
+    # Response controller with wrong address
+    combined_data = wrong_and_right_sequence_id()
+
+    fake_port = fake_serial.FakeSerial(responses=combined_data)
+    communicator = base_communicator.BaseVrcT70Communicator(
+        port=fake_port,
+        address=0x08,
+        sequence_id=0x2233,
+    )
+    communicator.validate_sequence_id = False
+    response = communicator.communicate(get_session_id_request.GetSessionIdRequest())
+    response = typing.cast(get_session_id_response.GetSessionIdResponse, response)
+    assert response.session_id == 0xcafebabe
+    assert fake_port.written_data == [common_packets.GET_SESSION_ID_REQUEST]
