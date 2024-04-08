@@ -1,14 +1,16 @@
 import functools
+import logging
 import time
 import typing
-
-from loguru import logger
 
 from vrc_t70 import exceptions
 from vrc_t70 import shared
 from vrc_t70.communicator import communicator
 from vrc_t70.manager import context, events_handler, misc, options, task_type
 from vrc_t70.protocol.requests import ping_request
+
+
+logger = logging.getLogger(__name__)
 
 
 class VrcT70Manager:
