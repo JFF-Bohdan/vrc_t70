@@ -2,6 +2,7 @@ import math
 
 import pytest
 
+from vrc_t70 import limitations
 from vrc_t70 import shared
 
 
@@ -18,3 +19,10 @@ from vrc_t70 import shared
 def test_decode_float(data, expected):
     calculated, = shared.decode_float(data)
     assert math.isclose(calculated, expected, abs_tol=0.01)
+
+
+def test_helper_provides_all_trunk_numbers():
+    expected = set(
+        trunk_number for trunk_number in range(limitations.MIN_TRUNK_NUMBER, limitations.MAX_TRUNK_NUMBER + 1)
+    )
+    assert set(shared.trunks_indexes()) == expected

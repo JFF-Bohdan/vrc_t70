@@ -248,7 +248,7 @@ class VrcT70Communicator(base_communicator.BaseVrcT70Communicator):
         if not isinstance(response, expected_response_class):
             raise exceptions.ErrorUnknownResponse(
                 f"Received response with wrong type. "
-                f"Expected {type(expected_response_class)} received {type(response)}"
+                f"Expected {expected_response_class} received {type(response)}"
             )
 
         return response

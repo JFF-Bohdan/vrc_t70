@@ -1,3 +1,4 @@
+import dataclasses
 import datetime
 import struct
 import time
@@ -6,6 +7,15 @@ import typing
 import serial
 
 from vrc_t70 import limitations
+
+
+@dataclasses.dataclass
+class FullSensorInfo:
+    trunk_number: int
+    sensor_index: int
+    address: int
+    is_connected: bool = False
+    temperature: typing.Optional[float | None] = None
 
 
 def init_serial(port_name: str, baudrate: int, timeout: float):
@@ -57,3 +67,7 @@ def trunks_indexes() -> typing.Generator[int, None, None]:
 
     """
     return range(limitations.MIN_TRUNK_NUMBER, limitations.MAX_TRUNK_NUMBER + 1)
+
+
+def list_of_nones_for_trunk() -> list:
+    return [None] * (limitations.MAX_SENSOR_INDEX + 1)

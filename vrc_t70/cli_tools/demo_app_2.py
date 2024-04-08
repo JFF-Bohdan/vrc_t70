@@ -7,19 +7,19 @@ from loguru import logger
 
 import terminaltables
 
+from vrc_t70 import manager
 from vrc_t70 import shared
 from vrc_t70.cli_tools import basic_arg_parser
 from vrc_t70.cli_tools import shared as cli_shared
 from vrc_t70.communicator import communicator
-from vrc_t70.communicator import controller_manager
 
 
-class EventsHandler(controller_manager.VrcT70ManagerEventsHandler):
+class EventsHandler(manager.VrcT70ManagerEventsHandler):
     def controller_connected(self, controller_address: int) -> None:
         logger.info(f"Controller connected, address {controller_address}")
 
     def controller_disconnected(self, controller_address: int) -> None:
-        logger.warning(f"Controller is disconnected, address {controller_address}")
+        logger.error(f"Controller is disconnected, address {controller_address}")
 
     def number_of_sensors_on_trunk_received(
             self,
@@ -49,7 +49,7 @@ class EventsHandler(controller_manager.VrcT70ManagerEventsHandler):
         table = terminaltables.AsciiTable(data)
         logger.info(f"Address of sensors on trunk received. Trunk {trunk_number}, addresses:\n{table.table}")
 
-    def temperature_of_sensor_received(
+    def temperature_of_sensors_received(
             self,
             controller_address: int,
             trunk_number: int,
@@ -89,22 +89,24 @@ def demo_app_2(additional_args):
         logger.info("Opening port ...")
         uart = shared.init_serial(args.port, args.baudrate, args.timeout)
 
-        manager = controller_manager.VrcT70Manager(
+        controller_manager = manager.VrcT70Manager(
             communicator=communicator.VrcT70Communicator(
                 port=uart,
                 address=args.address
             ),
-            options=controller_manager.VrcT70ManagerOptions(),
+            options=manager.VrcT70ManagerOptions(),
             events_handler=EventsHandler()
         )
 
         while True:
-            manager.communicate(max_time_to_talk=1.0)
+            controller_manager.communicate(max_time_to_talk=1.0)
             if stop_event.is_set():
                 logger.info("Exiting...")
                 break
             time.sleep(0.5)
-
+    except Exception:
+        logger.exception("Error communicating")
+        raise
     finally:
         if uart:
             logger.info("Closing UART")

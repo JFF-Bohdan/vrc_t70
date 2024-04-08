@@ -10,7 +10,6 @@ from loguru import logger
 
 import terminaltables
 
-from vrc_t70 import limitations
 from vrc_t70 import shared
 from vrc_t70.cli_tools import basic_arg_parser
 from vrc_t70.communicator import communicator
@@ -53,7 +52,7 @@ def sequential_scan(
     logger.debug(f"Session id: {session_id}")
     scan_info.session_id = session_id
 
-    for trunk_number in range(limitations.MIN_TRUNK_NUMBER, limitations.MAX_TRUNK_NUMBER + 1):
+    for trunk_number in shared.trunks_indexes():
         trunk_info = TrunkInfo()
         sensors_count_from_rescan = connection.rescan_sensors_on_trunk(trunk_number=trunk_number)
         if not sensors_count_from_rescan:
@@ -108,7 +107,7 @@ def batched_scan(
     logger.debug(f"Session id: {session_id}")
     scan_info.session_id = session_id
 
-    for trunk_number in range(limitations.MIN_TRUNK_NUMBER, limitations.MAX_TRUNK_NUMBER + 1):
+    for trunk_number in shared.trunks_indexes():
         trunk_info = TrunkInfo()
         sensors_count_from_rescan = connection.rescan_sensors_on_trunk(trunk_number=trunk_number)
         logger.info(f"Sensors count on trunk {trunk_number} is {sensors_count_from_rescan}")
@@ -163,7 +162,7 @@ def print_scan_results(results: ScanResults):
     header = ["Trunk", "Sensor index", "Sensor address", "Temperature"]
     table_data = [header]
 
-    for trunk_number in range(limitations.MIN_TRUNK_NUMBER, limitations.MAX_TRUNK_NUMBER + 1):
+    for trunk_number in shared.trunks_indexes():
         trunk_info = info.trunks[trunk_number]
         sensors_index = []
         sensors_address = []
