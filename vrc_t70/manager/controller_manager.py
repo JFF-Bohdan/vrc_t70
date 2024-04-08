@@ -62,7 +62,7 @@ class VrcT70Manager:
                     self.context.last_communication_time = None
                     self.events_handler.controller_disconnected(self.communicator.address)
 
-        logger.debug("No tasks to process, exiting...")
+        logger.debug("No more tasks to process, exiting...")
 
     def _add_tasks(self):
         """
@@ -139,7 +139,7 @@ class VrcT70Manager:
         # Calculating list of trunks for which we don't have information about sensor
         # addresses or number of addresses is not equal for a count received during
         # rescanning info
-        trunks_with_missing_addresses = set(self.context.addresses_on_trunk.keys()) - required_trunks
+        trunks_with_missing_addresses = required_trunks - set(self.context.addresses_on_trunk.keys())
         for trunk_number in required_trunks:
             expected_sensors_count = self.context.expected_sensors_count_on_trunk.get(trunk_number)
             available_addresses_qty = sum([1 if item else 0 for item in self.context.addresses_on_trunk[trunk_number]])
@@ -147,12 +147,17 @@ class VrcT70Manager:
             if (expected_sensors_count is None) or (expected_sensors_count != available_addresses_qty):
                 trunks_with_missing_addresses.add(trunk_number)
 
+        logger.debug(f"trunks_with_missing_addresses = {trunks_with_missing_addresses}")
+
         # Computing list of trunks for which we do not have information about temperatures
-        trunks_with_missing_temperatures = set(self.context.temperatures_on_trunk.keys()) - required_trunks
+        trunks_with_missing_temperatures = required_trunks - set(self.context.temperatures_on_trunk.keys())
+        logger.debug(f"trunks_with_missing_temperatures = {trunks_with_missing_temperatures}")
 
         # Calculating list of trunks for which we do not have information about addresses
         # and information about temperatures. For these trunks we would request full rescan.
         missing_all_info = trunks_with_missing_addresses & trunks_with_missing_temperatures
+        logger.debug(f"missing_all_info = {missing_all_info}")
+
         for trunk_number in missing_all_info:
             self.context.tasks_queue.put(
                 task_type.VrcT70ManagerTask(
