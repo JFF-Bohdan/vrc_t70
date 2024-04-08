@@ -14,7 +14,8 @@ class FullSensorInfo:
     trunk_number: int
     sensor_index: int
     address: int
-    is_connected: bool = False
+    # is_connected: bool = False
+    has_error: bool = False
     temperature: typing.Optional[float | None] = None
 
 

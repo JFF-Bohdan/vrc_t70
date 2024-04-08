@@ -257,6 +257,18 @@ class VrcT70Manager:
             # sensor_address.is_error_detected
             addresses[sensor_address.sensor_index] = sensor_address.address
 
+            full_sensor_info = self.context.full_sensor_info.get(sensor_address.address)
+            if full_sensor_info:
+                full_sensor_info.has_error = sensor_address.is_error_detected
+            else:
+                full_sensor_info = shared.FullSensorInfo(
+                    trunk_number=trunk_number,
+                    sensor_index=sensor_address.sensor_index,
+                    address=sensor_address.address,
+                    has_error=sensor_address.is_error_detected
+                )
+                self.context.full_sensor_info[sensor_address.address] = full_sensor_info
+
         self.context.addresses_on_trunk[trunk_number] = addresses
 
         self.events_handler.address_of_sensors_received_on_trunk(
@@ -280,7 +292,9 @@ class VrcT70Manager:
 
             sensor_address = self.context.addresses_on_trunk[trunk_number][sensor_data.sensor_index]
             if sensor_address:
-                self.context.temperatures_on_sensors[sensor_address] = sensor_data.temperature
+                full_sensor_info = self.context.full_sensor_info.get(sensor_address)
+                full_sensor_info.temperature = sensor_data.temperature
+                full_sensor_info.has_error = (not sensor_data.is_connected)
 
         self.context.temperatures_on_trunk[trunk_number] = temperatures
 

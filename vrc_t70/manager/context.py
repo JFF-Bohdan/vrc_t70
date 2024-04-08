@@ -20,11 +20,7 @@ class VrcT70ManagerContext:
         self.temperatures_on_trunk: collections.defaultdict[int, list[float | None]] = \
             collections.defaultdict(shared.list_of_nones_for_trunk)
 
-        # Mapping from sensor address to temperature
-        self.temperatures_on_sensors: dict[int, float] = {}
-
-        # TODO: add support
-        # Full information about sensor (mapping sensor address to full info
+        # Full information about sensor (mapping sensor address to full information available about it)
         self.full_sensor_info: dict[int, shared.FullSensorInfo] = {}
 
         # Stores time when last time temperature on trunk has been received
@@ -34,7 +30,6 @@ class VrcT70ManagerContext:
         self.expected_sensors_count_on_trunk.clear()
         self.addresses_on_trunk.clear()
         self.temperatures_on_trunk.clear()
-        self.temperatures_on_sensors.clear()
         self.timestamp_temperature_refresh_on_trunk.clear()
         self.full_sensor_info.clear()
 
@@ -44,6 +39,6 @@ class VrcT70ManagerContext:
         """
         addresses_on_trunk = set(self.addresses_on_trunk.keys())
         temperatures_on_trunk = set(self.temperatures_on_trunk.keys())
-        available_trunks = set(shared.trunks_indexes())
+        expected_trunks = set(shared.trunks_indexes())
 
-        return (addresses_on_trunk == available_trunks) and (temperatures_on_trunk == available_trunks)
+        return (addresses_on_trunk == expected_trunks) and (temperatures_on_trunk == expected_trunks)
