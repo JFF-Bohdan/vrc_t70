@@ -1,9 +1,14 @@
 import functools
+import logging
+import logging.config
+import pkgutil
 import signal
 import threading
 import typing
 
-from loguru import logger
+import yaml
+
+logger = logging.getLogger(__name__)
 
 
 def signal_handler(message: str, stop_event: threading.Event, signum, frame):
@@ -34,3 +39,9 @@ def register_interception_of_ctrl_c(message: str, event: threading.Event) -> Non
     """
     func = create_handler(message, event)
     signal.signal(signal.SIGINT, func)
+
+
+def setup_logging():
+    data = pkgutil.get_data("vrc_t70", "data/log_config.yaml")
+    config = yaml.safe_load(data)
+    logging.config.dictConfig(config)

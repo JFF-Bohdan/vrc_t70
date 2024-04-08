@@ -17,7 +17,7 @@ from vrc_t70.protocol.responses.typed import data_types, get_sensor_unique_addre
     rescan_sensors_on_trunk_response, set_controller_new_address_response, set_session_id_response
 
 
-logger = logging.getLogger("vrct70.communicator")
+logger = logging.getLogger(__name__)
 
 
 class VrcT70Communicator(base_communicator.BaseVrcT70Communicator):

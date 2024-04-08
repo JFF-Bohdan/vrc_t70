@@ -1,21 +1,22 @@
 import dataclasses
 import datetime
+import logging.config
 import time
 
 import click
 
 import humanize
 
-from loguru import logger
-
 import terminaltables
 
 from vrc_t70 import shared
-from vrc_t70.cli_tools import basic_arg_parser
+from vrc_t70.cli_tools import basic_arg_parser, shared as cli_shared
 from vrc_t70.communicator import communicator
 
 DESIRED_SESSION_ID_1 = 0xdeadbeef
 DESIRED_SESSION_ID_2 = 0xcafebabe
+
+logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
@@ -199,7 +200,9 @@ def print_scan_results(results: ScanResults):
 def demo_app_1(additional_args):
     arg_parser = basic_arg_parser.create_basic_parser()
     args = arg_parser.parse_args(additional_args)
-    logger.info("Searching for controllers")
+
+    cli_shared.setup_logging()
+    logger.info("Connecting to controller")
 
     uart = None
     try:

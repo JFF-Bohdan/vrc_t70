@@ -1,11 +1,11 @@
 crcmod==1.7
 pyserial==3.5
-ConfigArgParse==1.7
-loguru==0.7.2
-click==8.1.7
 
 # CLI tools
+ConfigArgParse==1.7
+click==8.1.7
 terminaltables==3.1.10
 tqdm==4.66.2
 humanize==4.9.0
 colorama
+PyYAML

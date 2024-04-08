@@ -1,10 +1,14 @@
-import click
+import logging
 
-from loguru import logger
+import click
 
 import serial.tools.list_ports
 
 import terminaltables
+
+from vrc_t70.cli_tools import shared as cli_shared
+
+logger = logging.getLogger(__name__)
 
 
 @click.command(
@@ -13,6 +17,7 @@ import terminaltables
     add_help_option=False,
 )
 def list_ports():
+    cli_shared.setup_logging()
     logger.info("Looking for available COM ports ...")
 
     ports = serial.tools.list_ports.comports()

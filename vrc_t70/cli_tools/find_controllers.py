@@ -1,3 +1,4 @@
+import logging
 import threading
 import time
 import typing
@@ -7,8 +8,6 @@ import click
 import configargparse
 
 import humanize
-
-from loguru import logger
 
 import terminaltables
 
@@ -21,6 +20,9 @@ from vrc_t70 import shared
 from vrc_t70.cli_tools import basic_arg_parser
 from vrc_t70.cli_tools import shared as cli_shared
 from vrc_t70.communicator import communicator
+
+
+logger = logging.getLogger(__name__)
 
 
 def extend_parser(parser: configargparse.ArgumentParser) -> configargparse.ArgumentParser:
@@ -114,6 +116,8 @@ def find_controllers(additional_args):
     arg_parser = basic_arg_parser.create_basic_parser()
     arg_parser = extend_parser(arg_parser)
     args = arg_parser.parse_args(additional_args)
+
+    cli_shared.setup_logging()
 
     limitations.validate_controller_address(args.min, "Invalid min value for controller address, ")
     limitations.validate_controller_address(args.max, "Invalid max value for controller address, ")

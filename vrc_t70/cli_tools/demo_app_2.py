@@ -1,9 +1,8 @@
+import logging
 import threading
 import time
 
 import click
-
-from loguru import logger
 
 import terminaltables
 
@@ -12,6 +11,9 @@ from vrc_t70 import shared
 from vrc_t70.cli_tools import basic_arg_parser
 from vrc_t70.cli_tools import shared as cli_shared
 from vrc_t70.communicator import communicator
+
+
+logger = logging.getLogger(__name__)
 
 
 class EventsHandler(manager.VrcT70ManagerEventsHandler):
@@ -79,6 +81,8 @@ class EventsHandler(manager.VrcT70ManagerEventsHandler):
 def demo_app_2(additional_args):
     arg_parser = basic_arg_parser.create_basic_parser()
     args = arg_parser.parse_args(additional_args)
+
+    cli_shared.setup_logging()
     logger.info("Searching for controllers")
 
     stop_event = threading.Event()

@@ -14,7 +14,7 @@ from vrc_t70.protocol.requests import base_request
 from vrc_t70.protocol.responses import base_response, raw_response_data, typed_responses_factory
 
 
-logger = logging.getLogger("vrct70.base_communicator")
+logger = logging.getLogger(__name__)
 
 
 class BaseVrcT70Communicator:
