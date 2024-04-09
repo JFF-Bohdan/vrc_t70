@@ -7,7 +7,6 @@ from vrc_t70 import exceptions
 from vrc_t70 import shared
 from vrc_t70.communicator import communicator
 from vrc_t70.manager import context, events_handler, misc, options, task_type
-from vrc_t70.protocol.requests import ping_request
 
 
 logger = logging.getLogger(__name__)
@@ -101,6 +100,7 @@ class VrcT70Manager:
                         additional_sort_attribute=trunk_number,
                     )
                 )
+                refresh_requests_added_count += 1
 
             if refresh_requests_added_count:
                 return
@@ -318,7 +318,7 @@ class VrcT70Manager:
         but we still want to be sure that controller is available.
         """
         logger.debug("PING")
-        self.communicator.communicate(ping_request.PingRequest())
+        self.communicator.ping()
 
     def _need_refresh_temperature_on_trunk(self, trunk_number: int) -> bool:
         """

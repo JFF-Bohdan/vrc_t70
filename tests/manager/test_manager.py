@@ -1,7 +1,8 @@
 from unittest import mock
 
 from tests.support import fake_serial
-from tests.support import monotonic_clock_shifter
+
+import time_machine
 
 from vrc_t70 import communicator, manager, shared
 from vrc_t70.protocol.responses.typed import data_types
@@ -17,7 +18,7 @@ def test_can_create_manager():
     )
 
 
-@monotonic_clock_shifter.monotonic_clock_shifter(12345, tick=True)
+@time_machine.travel(12345, tick=True)
 @mock.patch("vrc_t70.manager.misc.get_random_session_id", return_value=0xcafebabe)
 def test_attempts_to_establish_new_session_id(_mocked_get_random_session_id):
     fake_communicator = mock.MagicMock()
@@ -35,7 +36,7 @@ def test_attempts_to_establish_new_session_id(_mocked_get_random_session_id):
     assert test_manager.context.session_id == 0xcafebabe
 
 
-@monotonic_clock_shifter.monotonic_clock_shifter(12345, tick=True)
+@time_machine.travel(12345, tick=True)
 @mock.patch("vrc_t70.manager.misc.get_random_session_id", return_value=0xcafebabe)
 def test_rescans_trunks(_mocked_get_random_session_id):
     fake_communicator = mock.MagicMock()
