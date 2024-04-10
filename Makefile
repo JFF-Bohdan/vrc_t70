@@ -32,7 +32,7 @@ help:
 
 .PHONY: tests
 tests:
-	$(PYTEST) $(TESTDIR) -vvv
+	$(PYTEST) --durations=10 -vvv $(TESTDIR)
 
 .PHONY: validate_package
 validate_package: tests
@@ -44,7 +44,7 @@ build_package: tests validate_package
 
 .PHONY: coverage
 coverage:
-	$(PYTEST) $(TESTDIR) -vv --cov=$(MODULE_NAME)
+	$(PYTEST) -vvv --cov=$(MODULE_NAME) $(TESTDIR)
 	$(COVERAGE) html
 	echo All good
 

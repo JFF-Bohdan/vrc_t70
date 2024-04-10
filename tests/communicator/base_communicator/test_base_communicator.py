@@ -62,13 +62,25 @@ def test_will_use_address_from_communicator_when_no_address_in_request():
     assert fake_port.written_data == [common_packets.PING_REQUEST]
 
 
-def test_retries_when_no_responses_and_then_gives_up():
+@mock.patch("vrc_t70.communicator.base_communicator.time")
+def test_retries_when_no_responses_and_then_gives_up(mocked_time):
+    current_time = 123000
+
+    def raising_time() -> float:
+        nonlocal current_time
+        result = current_time
+        current_time += 0.5
+        return result
+
+    mocked_time.monotonic = mock.MagicMock(side_effect=raising_time)
+
     fake_port = fake_serial.FakeSerial()
     communicator = base_communicator.BaseVrcT70Communicator(
         port=fake_port,
         address=0x42,
         requests_retries_count=5
     )
+
     with pytest.raises(exceptions.ErrorNoResponseFromController):
         communicator.communicate(ping_request.PingRequest(address=0x08, sequence_id=0x2233))
 

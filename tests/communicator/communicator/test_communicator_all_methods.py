@@ -1,4 +1,5 @@
 import math
+from unittest import mock
 
 from tests.support import common_packets
 from tests.support import fake_serial
@@ -30,7 +31,8 @@ def test_can_get_session_id_request():
     assert port.written_data == [common_packets.GET_SESSION_ID_REQUEST]
 
 
-def test_can_get_and_set_different_session_id():
+@mock.patch("vrc_t70.communicator.base_communicator.time.sleep")
+def test_can_get_and_set_different_session_id(_mocked_sleep):
     # Sequence id 0x2234, Session id 0xcafebabe
     SET_SESSION_ID_REQUEST_V2 = bytes([0x08, 0x06, 0x22, 0x34, 0x04, 0xca, 0xfe, 0xba, 0xbe, 0x8f])
     SET_SESSION_ID_RESPONSE_V2 = bytes([0x08, 0x06, 0x22, 0x34, 0x00, 0x04, 0xca, 0xfe, 0xba, 0xbe, 0x0e])
