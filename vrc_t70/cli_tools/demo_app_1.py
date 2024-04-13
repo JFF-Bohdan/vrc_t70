@@ -9,9 +9,8 @@ import humanize
 
 import terminaltables
 
-from vrc_t70 import shared
+from vrc_t70 import controller_communicator, shared
 from vrc_t70.cli_tools import basic_arg_parser, shared as cli_shared
-from vrc_t70.communicator import communicator
 
 DESIRED_SESSION_ID_1 = 0xdeadbeef
 DESIRED_SESSION_ID_2 = 0xcafebabe
@@ -40,7 +39,7 @@ class ScanResults:
 
 
 def sequential_scan(
-        connection: communicator.VrcT70Communicator,
+        connection: controller_communicator.VrcT70Communicator,
         address: int
 ) -> ScanResults:
     timestamp_begin = time.monotonic()
@@ -95,7 +94,7 @@ def sequential_scan(
 
 
 def batched_scan(
-        connection: communicator.VrcT70Communicator,
+        connection: controller_communicator.VrcT70Communicator,
         address: int
 ) -> ScanResults:
     timestamp_begin = time.monotonic()
@@ -133,7 +132,7 @@ def batched_scan(
     )
 
 
-def check_that_can_reconfigure_address(connection: communicator.VrcT70Communicator):
+def check_that_can_reconfigure_address(connection: controller_communicator.VrcT70Communicator):
     saved_address = connection.address
 
     test_address = (saved_address + 1) % 256
@@ -198,7 +197,7 @@ def print_scan_results(results: ScanResults):
 )
 @click.argument("additional_args", nargs=-1, type=click.UNPROCESSED)
 def demo_app_1(additional_args):
-    arg_parser = basic_arg_parser.create_basic_parser()
+    arg_parser = basic_arg_parser.create_basic_parser_for_single_controller()
     args = arg_parser.parse_args(additional_args)
 
     cli_shared.setup_logging()
@@ -209,7 +208,7 @@ def demo_app_1(additional_args):
         logger.info("Opening port ...")
         uart = shared.init_serial(args.port, args.baudrate, args.timeout)
 
-        connection = communicator.VrcT70Communicator(
+        connection = controller_communicator.VrcT70Communicator(
             port=uart,
             address=args.address
         )

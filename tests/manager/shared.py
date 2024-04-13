@@ -1,8 +1,8 @@
 import dataclasses
 import queue
 
-from vrc_t70 import manager, shared
-from vrc_t70.manager import context, task_type
+from vrc_t70 import controller_manager, shared
+from vrc_t70.controller_manager import context, task_type
 
 
 @dataclasses.dataclass
@@ -32,7 +32,7 @@ def extract_tasks_into_list(tasks: queue.PriorityQueue) -> list[task_type.VrcT70
     return result
 
 
-def extract_tasks_info(manager: manager.VrcT70Manager) -> RequestsInfo:
+def extract_tasks_info(manager: controller_manager.VrcT70Manager) -> RequestsInfo:
     result = RequestsInfo()
     tasks = extract_tasks_into_list(manager.context.tasks_queue)
     for task in tasks:

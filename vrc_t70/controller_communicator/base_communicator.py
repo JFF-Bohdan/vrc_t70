@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class BaseVrcT70Communicator:
     def __init__(
         self,
-        port: serial.Serial,
+        port: typing.Optional[serial.Serial] = None,
         address: int = defaults.DEFAULT_CONTROLLER_ADDRESS,
         requests_retries_count: int = defaults.DEFAULT_MAX_RETRIES_FOR_REQUEST,
         min_delay_between_requests: int = defaults.MIN_DELAY_BETWEEN_REQUESTS,
@@ -42,7 +42,7 @@ class BaseVrcT70Communicator:
 
         self._responses_factory = typed_responses_factory.ResponsesFactory()
 
-        self._max_symbol_wait_time = shared.default_wait_time_for_symbol(self.port.baudrate)
+        self._max_symbol_wait_time: typing.Optional[float] = None
 
         self.raise_exception_on_response_with_wrong_address = False
         self.min_wait_time_for_response = 0.075
@@ -54,6 +54,9 @@ class BaseVrcT70Communicator:
         Sends request to a controller and then receives response and creates typed
         class which represents response
         """
+        if self._max_symbol_wait_time is None:
+            self._max_symbol_wait_time = shared.default_wait_time_for_symbol(self.port.baudrate)
+
         for attempt in range(1, self.requests_retries_count + 1):
             self._make_delay_before_request()
 

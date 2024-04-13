@@ -4,8 +4,7 @@ from tests.support import common_packets
 from tests.support import ex_time_machine
 from tests.support import fake_serial
 
-from vrc_t70 import exceptions
-from vrc_t70.communicator import communicator
+from vrc_t70 import controller_communicator, exceptions
 from vrc_t70.protocol.requests import request_codes
 
 
@@ -93,7 +92,7 @@ def test_for_response_types_validation():
     for wrong_packet, expected_communication, sender in TEST_CASES:
         wrong_packet = wrong_packet if wrong_packet else common_packets.PING_RESPONSE
         port = fake_serial.FakeSerial(responses=wrong_packet)
-        comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+        comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
         with pytest.raises(exceptions.ErrorUnknownResponse):
             sender(comm)
 

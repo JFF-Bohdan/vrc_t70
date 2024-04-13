@@ -4,34 +4,34 @@ from unittest import mock
 from tests.support import common_packets
 from tests.support import fake_serial
 
-from vrc_t70.communicator import communicator
+from vrc_t70 import controller_communicator
 from vrc_t70.protocol.responses.typed import data_types
 
 
 def test_can_create_communicator():
     port = fake_serial.FakeSerial()
-    _ = communicator.VrcT70Communicator(port=port)
+    _ = controller_communicator.VrcT70Communicator(port=port)
 
     assert port.written_data == []
 
 
 def test_can_ping():
     port = fake_serial.FakeSerial(responses=common_packets.PING_RESPONSE)
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
     comm.ping()
     assert port.written_data == [common_packets.PING_REQUEST]
 
 
 def test_can_get_session_id_request():
     port = fake_serial.FakeSerial(responses=common_packets.GET_SESSION_ID_RESPONSE)
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
 
     session_id = comm.get_session_id()
     assert session_id == 0xdeadbeef
     assert port.written_data == [common_packets.GET_SESSION_ID_REQUEST]
 
 
-@mock.patch("vrc_t70.communicator.base_communicator.time.sleep")
+@mock.patch("vrc_t70.controller_communicator.base_communicator.time.sleep")
 def test_can_get_and_set_different_session_id(_mocked_sleep):
     # Sequence id 0x2234, Session id 0xcafebabe
     SET_SESSION_ID_REQUEST_V2 = bytes([0x08, 0x06, 0x22, 0x34, 0x04, 0xca, 0xfe, 0xba, 0xbe, 0x8f])
@@ -45,7 +45,7 @@ def test_can_get_and_set_different_session_id(_mocked_sleep):
         responses=common_packets.GET_SESSION_ID_RESPONSE + SET_SESSION_ID_RESPONSE_V2 + GET_SESSION_ID_RESPONSE_V2
 
     )
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
 
     session_id = comm.get_session_id()
     assert session_id == 0xdeadbeef
@@ -65,7 +65,7 @@ def test_can_get_and_set_different_session_id(_mocked_sleep):
 
 def test_can_rescan_sensors_on_trunk():
     port = fake_serial.FakeSerial(responses=common_packets.RESCAN_SENSORS_ON_TRUNK_RESPONSE)
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
 
     sensors_count = comm.rescan_sensors_on_trunk(trunk_number=4)
     assert sensors_count == 3
@@ -74,14 +74,14 @@ def test_can_rescan_sensors_on_trunk():
 
 def test_get_get_sensors_count_on_trunk():
     port = fake_serial.FakeSerial(responses=common_packets.GET_SENSORS_COUNT_ON_TRUNK_RESPONSE)
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
     comm.get_get_sensors_count_on_trunk(trunk_number=4)
     assert port.written_data == [common_packets.GET_SENSORS_COUNT_ON_TRUNK_REQUEST]
 
 
 def test_get_temperature_of_sensor_on_trunk():
     port = fake_serial.FakeSerial(responses=common_packets.GET_TEMPERATURE_OF_SENSOR_ON_TRUNK_RESPONSE)
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
 
     temperature = comm.get_temperature_of_sensor_on_trunk(trunk_number=4, sensor_index=5)
 
@@ -91,7 +91,7 @@ def test_get_temperature_of_sensor_on_trunk():
 
 def test_get_temperature_of_sensors_on_trunk():
     port = fake_serial.FakeSerial(responses=common_packets.GET_TEMPERATURES_ON_TRUNK_RESPONSE_5_SENSORS)
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
 
     sensors_info = comm.get_temperature_of_sensors_on_trunk(trunk_number=4)
 
@@ -113,7 +113,7 @@ def test_get_temperature_of_sensors_on_trunk():
 
 def test_get_sensor_unique_address_on_trunk():
     port = fake_serial.FakeSerial(responses=common_packets.GET_SENSOR_UNIQUE_ADDRESS_ON_TRUNK_RESPONSE)
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
 
     sensor_address = comm.get_sensor_unique_address_on_trunk(trunk_number=4, sensor_index=5)
     assert sensor_address == 0x28ff2c7d901501c1
@@ -123,7 +123,7 @@ def test_get_sensor_unique_address_on_trunk():
 
 def test_get_sensors_unique_address_on_trunk():
     port = fake_serial.FakeSerial(responses=common_packets.GET_SENSORS_UNIQUE_ADDRESS_ON_TRUNK_RESPONSE_10_SENSORS)
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
     expected_response = [
         data_types.SensorAddressInfo(
             trunk_number=4,
@@ -193,7 +193,7 @@ def test_get_sensors_unique_address_on_trunk():
 
 def test_set_controller_new_address():
     port = fake_serial.FakeSerial(responses=common_packets.SET_CONTROLLER_NEW_ADDRESS_RESPONSE)
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
 
     comm.set_controller_new_address(new_controller_address=42)
 

@@ -3,10 +3,8 @@ import logging
 import time
 import typing
 
-from vrc_t70 import exceptions
-from vrc_t70 import shared
-from vrc_t70.communicator import communicator
-from vrc_t70.manager import context, events_handler, misc, options, task_type
+from vrc_t70 import controller_communicator, exceptions, shared
+from vrc_t70.controller_manager import context, events_handler, misc, options, task_type
 
 
 logger = logging.getLogger(__name__)
@@ -15,7 +13,7 @@ logger = logging.getLogger(__name__)
 class VrcT70Manager:
     def __init__(
             self,
-            communicator: communicator.VrcT70Communicator,
+            communicator: controller_communicator.VrcT70Communicator,
             options: options.VrcT70ManagerOptions,
             events_handler: events_handler.VrcT70ManagerEventsHandler
     ):

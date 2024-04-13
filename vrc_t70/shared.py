@@ -71,4 +71,8 @@ def trunks_indexes() -> typing.Generator[int, None, None]:
 
 
 def list_of_nones_for_trunk() -> list:
+    """
+    Generates list with `N` number of None where `N` is a max number of sensors possible for a trunk
+    Like [None, None, ..., None]
+    """
     return [None] * (limitations.MAX_SENSOR_INDEX + 1)

@@ -4,30 +4,30 @@ from tests.support import fake_serial
 
 import time_machine
 
-from vrc_t70 import communicator, manager, shared
+from vrc_t70 import controller_communicator, controller_manager, shared
 from vrc_t70.protocol.responses.typed import data_types
 
 
 def test_can_create_manager():
-    _ = manager.VrcT70Manager(
-        communicator=communicator.VrcT70Communicator(
+    _ = controller_manager.VrcT70Manager(
+        communicator=controller_communicator.VrcT70Communicator(
             port=fake_serial.FakeSerial()
         ),
-        options=manager.VrcT70ManagerOptions(),
-        events_handler=manager.VrcT70ManagerEventsHandler()
+        options=controller_manager.VrcT70ManagerOptions(),
+        events_handler=controller_manager.VrcT70ManagerEventsHandler()
     )
 
 
 @time_machine.travel(12345, tick=True)
-@mock.patch("vrc_t70.manager.misc.get_random_session_id", return_value=0xcafebabe)
+@mock.patch("vrc_t70.controller_manager.misc.get_random_session_id", return_value=0xcafebabe)
 def test_attempts_to_establish_new_session_id(_mocked_get_random_session_id):
     fake_communicator = mock.MagicMock()
     fake_communicator.set_session_id.return_value = 0xcafebabe
 
-    test_manager = manager.VrcT70Manager(
+    test_manager = controller_manager.VrcT70Manager(
         communicator=fake_communicator,
-        options=manager.VrcT70ManagerOptions(),
-        events_handler=manager.VrcT70ManagerEventsHandler()
+        options=controller_manager.VrcT70ManagerOptions(),
+        events_handler=controller_manager.VrcT70ManagerEventsHandler()
     )
 
     test_manager.communicate(max_time_to_talk=0.001)
@@ -37,7 +37,7 @@ def test_attempts_to_establish_new_session_id(_mocked_get_random_session_id):
 
 
 @time_machine.travel(12345, tick=True)
-@mock.patch("vrc_t70.manager.misc.get_random_session_id", return_value=0xcafebabe)
+@mock.patch("vrc_t70.controller_manager.misc.get_random_session_id", return_value=0xcafebabe)
 def test_rescans_trunks(_mocked_get_random_session_id):
     fake_communicator = mock.MagicMock()
     fake_communicator.set_session_id.return_value = 0xcafebabe
@@ -71,10 +71,10 @@ def test_rescans_trunks(_mocked_get_random_session_id):
         )
     fake_communicator.get_temperature_of_sensors_on_trunk.side_effect = temperatures_on_trunk_response
 
-    test_manager = manager.VrcT70Manager(
+    test_manager = controller_manager.VrcT70Manager(
         communicator=fake_communicator,
-        options=manager.VrcT70ManagerOptions(),
-        events_handler=manager.VrcT70ManagerEventsHandler()
+        options=controller_manager.VrcT70ManagerOptions(),
+        events_handler=controller_manager.VrcT70ManagerEventsHandler()
     )
 
     test_manager.communicate()

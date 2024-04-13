@@ -3,8 +3,7 @@ import pytest
 from tests.support import ex_time_machine
 from tests.support import fake_serial
 
-from vrc_t70 import exceptions
-from vrc_t70.communicator import communicator
+from vrc_t70 import controller_communicator, exceptions
 
 
 TEST_CASES = [
@@ -161,6 +160,6 @@ def test_raises_exception_on_unknown_response():
 
     for sender, response in TEST_CASES:
         port = fake_serial.FakeSerial(responses=response)
-        comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+        comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
         with pytest.raises(exceptions.ErrorUnknownResponse):
             sender(comm)

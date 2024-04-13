@@ -1,6 +1,6 @@
 from vrc_t70 import limitations
 from vrc_t70 import shared
-from vrc_t70.manager import context
+from vrc_t70.controller_manager import context
 
 
 def test_can_create_context():

@@ -4,72 +4,13 @@ import time
 
 import click
 
-import terminaltables
-
-from vrc_t70 import manager
-from vrc_t70 import shared
+from vrc_t70 import controller_communicator, controller_manager, shared
 from vrc_t70.cli_tools import basic_arg_parser
+from vrc_t70.cli_tools import events_handler
 from vrc_t70.cli_tools import shared as cli_shared
-from vrc_t70.communicator import communicator
 
 
 logger = logging.getLogger(__name__)
-
-
-class EventsHandler(manager.VrcT70ManagerEventsHandler):
-    def controller_connected(self, controller_address: int) -> None:
-        logger.info(f"Controller connected, address {controller_address}")
-
-    def controller_disconnected(self, controller_address: int) -> None:
-        logger.error(f"Controller is disconnected, address {controller_address}")
-
-    def number_of_sensors_on_trunk_received(
-            self,
-            controller_address: int,
-            trunk_number: int,
-            sensors_count: int
-    ) -> None:
-        logger.info(f"Number of sensors on trunk received. Trunk {trunk_number}, number of sensors {sensors_count}")
-
-    def address_of_sensors_received_on_trunk(
-            self,
-            controller_address: int,
-            trunk_number: int,
-            addresses: list[int | None],
-    ):
-        data = [
-            ["Sensor index", "Address"]
-        ]
-        for index, address in enumerate(addresses):
-            data.append(
-                [
-                    index,
-                    f"0x{address:08x}" if address else "N/A"
-                ]
-            )
-
-        table = terminaltables.AsciiTable(data)
-        logger.info(f"Address of sensors on trunk received. Trunk {trunk_number}, addresses:\n{table.table}")
-
-    def temperature_of_sensors_received(
-            self,
-            controller_address: int,
-            trunk_number: int,
-            temperatures: list[float | None],
-    ):
-        data = [
-            ["Sensor index", "Temperature"]
-        ]
-        for index, temperature in enumerate(temperatures):
-            data.append(
-                [
-                    index,
-                    f"{temperature:0.2f}" if temperature else "N/A"
-                ]
-            )
-
-        table = terminaltables.AsciiTable(data)
-        logger.info(f"Temperature of sensors on trunk received. Trunk {trunk_number}, temperatures:\n{table.table}")
 
 
 @click.command(
@@ -79,11 +20,11 @@ class EventsHandler(manager.VrcT70ManagerEventsHandler):
 )
 @click.argument("additional_args", nargs=-1, type=click.UNPROCESSED)
 def demo_app_2(additional_args):
-    arg_parser = basic_arg_parser.create_basic_parser()
+    arg_parser = basic_arg_parser.create_basic_parser_for_single_controller()
     args = arg_parser.parse_args(additional_args)
 
     cli_shared.setup_logging()
-    logger.info("Searching for controllers")
+    logger.info("Connecting to controller")
 
     stop_event = threading.Event()
     cli_shared.register_interception_of_ctrl_c("Termination requested...", stop_event)
@@ -93,17 +34,17 @@ def demo_app_2(additional_args):
         logger.info("Opening port ...")
         uart = shared.init_serial(args.port, args.baudrate, args.timeout)
 
-        controller_manager = manager.VrcT70Manager(
-            communicator=communicator.VrcT70Communicator(
+        manager = controller_manager.VrcT70Manager(
+            communicator=controller_communicator.VrcT70Communicator(
                 port=uart,
                 address=args.address
             ),
-            options=manager.VrcT70ManagerOptions(),
-            events_handler=EventsHandler()
+            options=controller_manager.VrcT70ManagerOptions(),
+            events_handler=events_handler.EventsHandler()
         )
 
         while True:
-            controller_manager.communicate(max_time_to_talk=1.0)
+            manager.communicate(max_time_to_talk=1.0)
             if stop_event.is_set():
                 logger.info("Exiting...")
                 break
@@ -115,3 +56,5 @@ def demo_app_2(additional_args):
         if uart:
             logger.info("Closing UART")
             uart.close()
+
+    logger.info("Application finished")

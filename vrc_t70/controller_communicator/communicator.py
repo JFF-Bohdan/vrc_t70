@@ -3,10 +3,7 @@ import typing
 
 import serial
 
-from vrc_t70 import defaults
-from vrc_t70 import exceptions
-from vrc_t70 import limitations
-from vrc_t70.communicator import base_communicator
+from vrc_t70 import controller_communicator, defaults, exceptions, limitations
 from vrc_t70.protocol.requests import base_request, get_sensor_unique_address_on_trunk_request, \
     get_sensors_count_on_trunk_request, get_sensors_unique_address_on_trunk_request, get_session_id_request, \
     get_temperature_of_sensor_on_trunk_request, get_temperatures_on_trunk_request, ping_request, \
@@ -20,10 +17,10 @@ from vrc_t70.protocol.responses.typed import data_types, get_sensor_unique_addre
 logger = logging.getLogger(__name__)
 
 
-class VrcT70Communicator(base_communicator.BaseVrcT70Communicator):
+class VrcT70Communicator(controller_communicator.BaseVrcT70Communicator):
     def __init__(
             self,
-            port: serial.Serial,
+            port: typing.Optional[serial.Serial] = None,
             address: int = defaults.DEFAULT_CONTROLLER_ADDRESS,
             requests_retries_count: int = defaults.DEFAULT_MAX_RETRIES_FOR_REQUEST,
             sequence_id: int = 1

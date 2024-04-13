@@ -4,11 +4,11 @@ from tests.manager import shared as manager_tests_shared
 
 import time_machine
 
-from vrc_t70 import manager, shared
+from vrc_t70 import controller_manager, shared
 from vrc_t70.protocol.responses.typed import data_types
 
 
-@time_machine.travel(123000 + 2 * manager.DEFAULT_INTERVAL_FOR_TEMPERATURE_REFRESH)
+@time_machine.travel(123000 + 2 * controller_manager.DEFAULT_INTERVAL_FOR_TEMPERATURE_REFRESH)
 def test_rescans_temperature_on_trunks_periodically(caplog):
     fake_communicator = mock.MagicMock()
     fake_communicator.address = 8
@@ -30,10 +30,10 @@ def test_rescans_temperature_on_trunks_periodically(caplog):
     prepared_context = manager_tests_shared.prepare_context_with_all_data()
     assert prepared_context.has_data_for_all_trunks()
 
-    test_manager = manager.VrcT70Manager(
+    test_manager = controller_manager.VrcT70Manager(
         communicator=fake_communicator,
-        options=manager.VrcT70ManagerOptions(),
-        events_handler=manager.VrcT70ManagerEventsHandler(),
+        options=controller_manager.VrcT70ManagerOptions(),
+        events_handler=controller_manager.VrcT70ManagerEventsHandler(),
     )
     test_manager.context = prepared_context
     test_manager.communicate()
@@ -76,10 +76,10 @@ def test_dont_send_any_packets_if_communicated_recently(caplog):
     prepared_context = manager_tests_shared.prepare_context_with_all_data()
     assert prepared_context.has_data_for_all_trunks()
 
-    test_manager = manager.VrcT70Manager(
+    test_manager = controller_manager.VrcT70Manager(
         communicator=fake_communicator,
-        options=manager.VrcT70ManagerOptions(),
-        events_handler=manager.VrcT70ManagerEventsHandler(),
+        options=controller_manager.VrcT70ManagerOptions(),
+        events_handler=controller_manager.VrcT70ManagerEventsHandler(),
     )
     test_manager.context = prepared_context
     test_manager.communicate()

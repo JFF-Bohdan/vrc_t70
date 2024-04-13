@@ -13,13 +13,9 @@ import terminaltables
 
 import tqdm
 
-from vrc_t70 import defaults
-from vrc_t70 import exceptions
-from vrc_t70 import limitations
-from vrc_t70 import shared
+from vrc_t70 import controller_communicator, defaults, exceptions, limitations, shared
 from vrc_t70.cli_tools import basic_arg_parser
 from vrc_t70.cli_tools import shared as cli_shared
-from vrc_t70.communicator import communicator
 
 
 logger = logging.getLogger(__name__)
@@ -71,7 +67,7 @@ def generate_table_report(devices: typing.Iterable[int]):
 
 
 def scan_for_controllers(
-        connection: communicator.VrcT70Communicator,
+        connection: controller_communicator.VrcT70Communicator,
         scan_terminated_by_user: threading.Event,
         min_address: int,
         max_address: int
@@ -113,7 +109,7 @@ def scan_for_controllers(
 )
 @click.argument("additional_args", nargs=-1, type=click.UNPROCESSED)
 def find_controllers(additional_args):
-    arg_parser = basic_arg_parser.create_basic_parser()
+    arg_parser = basic_arg_parser.create_basic_parser_for_single_controller()
     arg_parser = extend_parser(arg_parser)
     args = arg_parser.parse_args(additional_args)
 
@@ -142,7 +138,7 @@ def find_controllers(additional_args):
         )
         port_successfully_opened = True
 
-        connection = communicator.VrcT70Communicator(
+        connection = controller_communicator.VrcT70Communicator(
             port=uart,
             address=args.min,
             requests_retries_count=args.retries

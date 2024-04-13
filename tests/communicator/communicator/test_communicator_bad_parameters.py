@@ -4,9 +4,7 @@ import pytest
 
 from tests.support import fake_serial
 
-from vrc_t70 import exceptions
-from vrc_t70 import limitations
-from vrc_t70.communicator import communicator
+from vrc_t70 import controller_communicator, exceptions, limitations
 
 
 COMMUNICATIONS_TO_TEST_TRUNKS_ONLY = [
@@ -52,7 +50,7 @@ COMMUNICATIONS_TO_TEST_TRUNKS_AND_SENSOR_INDEX = [
 def test_for_bad_trunks_and_good_sensors(trunk, sensor):
     for case in itertools.chain(COMMUNICATIONS_TO_TEST_TRUNKS_ONLY, COMMUNICATIONS_TO_TEST_TRUNKS_AND_SENSOR_INDEX):
         port = fake_serial.FakeSerial(responses=[])
-        comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+        comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
         with pytest.raises(exceptions.ErrorValueError):
             case(comm, trunk, sensor)
 
@@ -68,7 +66,7 @@ def test_for_bad_trunks_and_good_sensors(trunk, sensor):
 def test_for_good_trunks_and_bad_sensors(trunk, sensor):
     for case in COMMUNICATIONS_TO_TEST_TRUNKS_AND_SENSOR_INDEX:
         port = fake_serial.FakeSerial(responses=[])
-        comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+        comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
         with pytest.raises(exceptions.ErrorValueError):
             case(comm, trunk, sensor)
 
@@ -79,7 +77,7 @@ def test_for_good_trunks_and_bad_sensors(trunk, sensor):
 )
 def test_for_session_id(session_id):
     port = fake_serial.FakeSerial(responses=[])
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
     with pytest.raises(exceptions.ErrorValueError):
         comm.set_session_id(session_id=session_id)
 
@@ -90,6 +88,6 @@ def test_for_session_id(session_id):
 )
 def test_for_controller_address(new_address):
     port = fake_serial.FakeSerial(responses=[])
-    comm = communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
+    comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
     with pytest.raises(exceptions.ErrorValueError):
         comm.set_controller_new_address(new_controller_address=new_address)

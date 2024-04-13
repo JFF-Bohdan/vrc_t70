@@ -1,19 +1,17 @@
 from tests.manager import shared as manager_tests_shared
 from tests.support import fake_serial
 
-from vrc_t70 import communicator
-from vrc_t70 import manager
-from vrc_t70 import shared
+from vrc_t70 import controller_communicator, controller_manager, shared
 
 
 def test_have_some_correct_addresses_and_no_temperatures():
     all_trunks = set(shared.trunks_indexes())
-    test_manager = manager.VrcT70Manager(
-        communicator=communicator.VrcT70Communicator(
+    test_manager = controller_manager.VrcT70Manager(
+        communicator=controller_communicator.VrcT70Communicator(
             port=fake_serial.FakeSerial()
         ),
-        options=manager.VrcT70ManagerOptions(),
-        events_handler=manager.VrcT70ManagerEventsHandler()
+        options=controller_manager.VrcT70ManagerOptions(),
+        events_handler=controller_manager.VrcT70ManagerEventsHandler()
     )
 
     test_manager.context.expected_sensors_count_on_trunk[1] = 3
@@ -35,12 +33,12 @@ def test_have_some_correct_addresses_and_no_temperatures():
 
 def test_have_unexpected_number_of_addresses_and_no_temperatures():
     all_trunks = set(shared.trunks_indexes())
-    test_manager = manager.VrcT70Manager(
-        communicator=communicator.VrcT70Communicator(
+    test_manager = controller_manager.VrcT70Manager(
+        communicator=controller_communicator.VrcT70Communicator(
             port=fake_serial.FakeSerial()
         ),
-        options=manager.VrcT70ManagerOptions(),
-        events_handler=manager.VrcT70ManagerEventsHandler()
+        options=controller_manager.VrcT70ManagerOptions(),
+        events_handler=controller_manager.VrcT70ManagerEventsHandler()
     )
 
     test_manager.context.expected_sensors_count_on_trunk[1] = 42
@@ -62,12 +60,12 @@ def test_have_unexpected_number_of_addresses_and_no_temperatures():
 
 def test_have_some_none_addresses_and_no_temperatures():
     all_trunks = set(shared.trunks_indexes())
-    test_manager = manager.VrcT70Manager(
-        communicator=communicator.VrcT70Communicator(
+    test_manager = controller_manager.VrcT70Manager(
+        communicator=controller_communicator.VrcT70Communicator(
             port=fake_serial.FakeSerial()
         ),
-        options=manager.VrcT70ManagerOptions(),
-        events_handler=manager.VrcT70ManagerEventsHandler()
+        options=controller_manager.VrcT70ManagerOptions(),
+        events_handler=controller_manager.VrcT70ManagerEventsHandler()
     )
 
     test_manager.context.expected_sensors_count_on_trunk[1] = 3
@@ -89,12 +87,12 @@ def test_have_some_none_addresses_and_no_temperatures():
 
 def test_have_temperatures_but_no_addresses():
     all_trunks = set(shared.trunks_indexes())
-    test_manager = manager.VrcT70Manager(
-        communicator=communicator.VrcT70Communicator(
+    test_manager = controller_manager.VrcT70Manager(
+        communicator=controller_communicator.VrcT70Communicator(
             port=fake_serial.FakeSerial()
         ),
-        options=manager.VrcT70ManagerOptions(),
-        events_handler=manager.VrcT70ManagerEventsHandler()
+        options=controller_manager.VrcT70ManagerOptions(),
+        events_handler=controller_manager.VrcT70ManagerEventsHandler()
     )
 
     test_manager.context.expected_sensors_count_on_trunk[1] = 3
