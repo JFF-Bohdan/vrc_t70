@@ -4,6 +4,7 @@ import typing
 import pytest
 
 from tests.support import common_packets
+from tests.support import ex_time_machine
 from tests.support import fake_serial
 
 from vrc_t70 import exceptions
@@ -25,7 +26,7 @@ def wrong_and_right_sequence_id() -> bytes:
     return combined_data
 
 
-# @pytest.mark.xfail
+@ex_time_machine.travel(123000, tick_delta=0.02)
 def test_ignores_response_from_controller_with_wrong_address_and_gets_correct_one():
     # Response controller with wrong address
     combined_data = wrong_and_right_sequence_id()
@@ -59,6 +60,7 @@ def test_raises_exception_on_response_from_controller_with_wrong_address():
         assert e.expected_address == 8
 
 
+@ex_time_machine.travel(123000)
 def test_raises_exception_when_no_response_from_expected_controller():
     fake_port = fake_serial.FakeSerial(
         responses=bytes([0x01, 0x07, 0x10, 0x20, 0x00, 0x04, 0xca, 0xfe, 0xba, 0xbe, 0x32])

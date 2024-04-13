@@ -11,7 +11,7 @@ class GetSessionIdRequest(base_request.BaseRequest):
             self,
             address: typing.Optional[int] = None,
             sequence_id: typing.Optional[int] = None,
-            additional_wait_time_for_response: typing.Optional[float] = 0.0,
+            additional_wait_time_for_response: typing.Optional[float] = 0.05,
     ):
         super().__init__(
             address=address,

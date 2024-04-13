@@ -139,6 +139,7 @@ def test_can_communicate_with_slow_controller_when_response_contains_payload():
     assert fake_port.written_data == [common_packets.GET_SESSION_ID_REQUEST]
 
 
+@ex_time_machine.travel(123000, tick=True, tick_delta=0.05)
 def test_adjusts_sequence_id_on_overflow():
     responses = [
         bytes([0x08, 0x01, 0xff, 0xfd, 0x00, 0x00, 0xfb]),
