@@ -1,5 +1,6 @@
 import pytest
 
+from tests.support import ex_time_machine
 from tests.support import fake_serial
 
 from vrc_t70 import exceptions
@@ -151,7 +152,8 @@ TEST_CASES = [
 ]
 
 
-def test_for_response_types_validation():
+@ex_time_machine.travel(123000, tick_delta=0.01)
+def test_raises_exception_on_unknown_response():
     """
     Testing that communicator will raise exception if we would have valida packet (valid structure and CRC)
     with unexpected parameters

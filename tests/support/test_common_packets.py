@@ -2,6 +2,8 @@ import inspect
 import sys
 import typing
 
+from tests.support import ex_time_machine
+
 from vrc_t70 import exceptions
 from vrc_t70.crc import default_crc
 from vrc_t70.protocol.responses import raw_response_data
@@ -49,6 +51,7 @@ def get_all_sample_packets() -> list[tuple[str, bytes]]:
     return result
 
 
+@ex_time_machine.travel(123000)
 def test_all_sample_packets_has_correct_crc():
     vars = get_all_sample_packets()
     assert len(vars)

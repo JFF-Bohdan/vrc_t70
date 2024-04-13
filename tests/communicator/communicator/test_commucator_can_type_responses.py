@@ -1,6 +1,7 @@
 import pytest
 
 from tests.support import common_packets
+from tests.support import ex_time_machine
 from tests.support import fake_serial
 
 from vrc_t70 import exceptions
@@ -75,6 +76,7 @@ TEST_CASES = [
 ]
 
 
+@ex_time_machine.travel(123000, tick_delta=0.01)
 def test_for_response_types_validation():
     """
     Testing that responses would have expected data type. In this test we would simulate when for each and

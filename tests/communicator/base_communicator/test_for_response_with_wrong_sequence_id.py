@@ -28,7 +28,7 @@ def wrong_and_right_sequence_id() -> bytes:
 
 @ex_time_machine.travel(123000, tick_delta=0.02)
 def test_ignores_response_with_wrong_sequence_id():
-    # Response controller with wrong address
+    # Response from controller with wrong address
     combined_data = wrong_and_right_sequence_id()
 
     fake_port = fake_serial.FakeSerial(responses=combined_data)
