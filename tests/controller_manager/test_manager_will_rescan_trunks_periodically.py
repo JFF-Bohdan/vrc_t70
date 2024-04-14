@@ -9,7 +9,7 @@ from vrc_t70.protocol import responses
 
 
 @time_machine.travel(123000 + 2 * controller_manager.DEFAULT_INTERVAL_FOR_TEMPERATURE_REFRESH)
-def test_rescans_temperature_on_trunks_periodically(caplog):
+def test_rescans_temperature_on_trunks_periodically():
     fake_communicator = mock.MagicMock()
     fake_communicator.address = 8
 
@@ -55,7 +55,7 @@ def test_rescans_temperature_on_trunks_periodically(caplog):
 
 
 @time_machine.travel(123000)
-def test_dont_send_any_packets_if_communicated_recently(caplog):
+def test_dont_send_any_packets_if_communicated_recently():
     fake_communicator = mock.MagicMock()
     fake_communicator.address = 8
 
