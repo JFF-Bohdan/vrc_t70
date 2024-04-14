@@ -1,4 +1,4 @@
-from tests.manager import shared as manager_tests_shared
+from tests.controller_manager import shared as manager_tests_shared
 from tests.support import fake_serial
 
 from vrc_t70 import controller_communicator, controller_manager, shared

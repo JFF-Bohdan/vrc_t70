@@ -6,7 +6,6 @@ import serial
 
 from vrc_t70 import controller_manager
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -18,11 +17,13 @@ class SerialPortManager:
         self,
         port_opener: typing.Callable,
         managers_for_controllers: list[controller_manager.VrcT70Manager],
-        reopen_attempts_count_before_creating_new_port: int = DEFAULT_REOPEN_ATTEMPTS_COUNT_BEFORE_CREATING_NEW_PORT
+        sleep_interval_on_error: typing.Optional[float] = DEFAULT_SLEEP_INTERVAL_ON_SERIAL_PORT_ERROR,
+        reopen_attempts_count_before_creating_new_port: int = DEFAULT_REOPEN_ATTEMPTS_COUNT_BEFORE_CREATING_NEW_PORT,
     ):
         self.port_opener = port_opener
-        self.reopen_attempts_count_before_creating_new_port = reopen_attempts_count_before_creating_new_port
         self.managers_for_controllers = managers_for_controllers
+        self.reopen_attempts_count_before_creating_new_port = reopen_attempts_count_before_creating_new_port
+        self.sleep_interval_on_error = sleep_interval_on_error
         self._uart: typing.Optional[serial.Serial] = None
 
         self._errors_count = 0
@@ -30,7 +31,6 @@ class SerialPortManager:
     def communicate(
             self,
             max_time_to_talk: typing.Optional[float] = None,
-            sleep_interval_on_error: typing.Optional[float] = DEFAULT_SLEEP_INTERVAL_ON_SERIAL_PORT_ERROR
     ):
         try:
             if (self._uart is None) or self._uart.closed:
@@ -39,7 +39,8 @@ class SerialPortManager:
                 for manager in self.managers_for_controllers:
                     manager.communicator.port = self._uart
 
-            max_time_to_talk_per_controller = max_time_to_talk / len(self.managers_for_controllers)
+            max_time_to_talk_per_controller = max_time_to_talk / len(self.managers_for_controllers) \
+                if max_time_to_talk else None
             for manager in self.managers_for_controllers:
                 manager.communicate(max_time_to_talk=max_time_to_talk_per_controller)
 
@@ -58,9 +59,9 @@ class SerialPortManager:
                 self._errors_count = 0
                 self._uart = None
 
-            if sleep_interval_on_error:
-                logger.info(f"Going to sleep for {sleep_interval_on_error} second(s)...")
-                time.sleep(sleep_interval_on_error)
+            if self.sleep_interval_on_error:
+                logger.info(f"Going to sleep for {self.sleep_interval_on_error} second(s)...")
+                time.sleep(self.sleep_interval_on_error)
 
     def close(self):
         if not self._uart:

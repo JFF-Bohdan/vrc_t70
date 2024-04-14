@@ -1,6 +1,6 @@
 from unittest import mock
 
-from tests.manager import shared as manager_tests_shared
+from tests.controller_manager import shared as manager_tests_shared
 
 import time_machine
 
