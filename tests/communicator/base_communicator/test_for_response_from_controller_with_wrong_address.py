@@ -8,8 +8,7 @@ from tests.support import ex_time_machine
 from tests.support import fake_serial
 
 from vrc_t70 import controller_communicator, exceptions
-from vrc_t70.protocol.requests import get_session_id_request
-from vrc_t70.protocol.responses.typed import get_session_id_response
+from vrc_t70.protocol import requests, responses
 
 
 def wrong_and_right_sequence_id() -> bytes:
@@ -36,8 +35,8 @@ def test_ignores_response_from_controller_with_wrong_address_and_gets_correct_on
         address=0x08,
         sequence_id=0x2233,
     )
-    response = communicator.communicate(get_session_id_request.GetSessionIdRequest())
-    response = typing.cast(get_session_id_response.GetSessionIdResponse, response)
+    response = communicator.communicate(requests.GetSessionIdRequest())
+    response = typing.cast(responses.GetSessionIdResponse, response)
     assert response.session_id == 0xdeadbeef
     assert fake_port.written_data == [common_packets.GET_SESSION_ID_REQUEST] * 2
 
@@ -54,7 +53,7 @@ def test_raises_exception_on_response_from_controller_with_wrong_address():
     )
     communicator.raise_exception_on_response_with_wrong_address = True
     with pytest.raises(exceptions.ErrorResponseFromControllerWithWrongAddress) as e:
-        _ = communicator.communicate(get_session_id_request.GetSessionIdRequest())
+        _ = communicator.communicate(requests.GetSessionIdRequest())
         assert e.unexpected_address == 1
         assert e.expected_address == 8
 
@@ -70,4 +69,4 @@ def test_raises_exception_when_no_response_from_expected_controller():
         sequence_id=0x2233,
     )
     with pytest.raises(exceptions.ErrorNoResponseFromController):
-        _ = communicator.communicate(get_session_id_request.GetSessionIdRequest())
+        _ = communicator.communicate(requests.GetSessionIdRequest())

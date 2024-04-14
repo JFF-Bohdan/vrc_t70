@@ -1,12 +1,11 @@
 from tests.support import common_packets
 
-from vrc_t70.protocol.responses import raw_response_data
-from vrc_t70.protocol.responses.typed import get_sensor_unique_address_on_trunk_response
+from vrc_t70.protocol import responses
 
 
 def test_can_parse_get_sensor_unique_address_on_trunk_response():
-    raw_response = raw_response_data.deserialize(data=common_packets.GET_SENSOR_UNIQUE_ADDRESS_ON_TRUNK_RESPONSE)
-    response = get_sensor_unique_address_on_trunk_response.GetSensorUniqueAddressOnTrunkResponse(
+    raw_response = responses.deserialize(data=common_packets.GET_SENSOR_UNIQUE_ADDRESS_ON_TRUNK_RESPONSE)
+    response = responses.GetSensorUniqueAddressOnTrunkResponse(
         raw_response=raw_response
     )
 

@@ -5,7 +5,7 @@ from tests.manager import shared as manager_tests_shared
 import time_machine
 
 from vrc_t70 import controller_manager, shared
-from vrc_t70.protocol.responses.typed import data_types
+from vrc_t70.protocol import responses
 
 
 @time_machine.travel(123000 + 2 * controller_manager.DEFAULT_INTERVAL_FOR_TEMPERATURE_REFRESH)
@@ -17,7 +17,7 @@ def test_rescans_temperature_on_trunks_periodically(caplog):
     for trunk_number in shared.trunks_indexes():
         temperatures_on_trunk_response.append(
             [
-                data_types.SensorTemperatureInfo(
+                responses.data_types.SensorTemperatureInfo(
                     trunk_number=trunk_number,
                     sensor_index=0,
                     is_connected=True,
@@ -63,7 +63,7 @@ def test_dont_send_any_packets_if_communicated_recently(caplog):
     for trunk_number in shared.trunks_indexes():
         temperatures_on_trunk_response.append(
             [
-                data_types.SensorTemperatureInfo(
+                responses.data_types.SensorTemperatureInfo(
                     trunk_number=trunk_number,
                     sensor_index=0,
                     is_connected=True,

@@ -5,7 +5,7 @@ from tests.support import fake_serial
 import time_machine
 
 from vrc_t70 import controller_communicator, controller_manager, shared
-from vrc_t70.protocol.responses.typed import data_types
+from vrc_t70.protocol import responses
 
 
 def test_can_create_manager():
@@ -47,7 +47,7 @@ def test_rescans_trunks(_mocked_get_random_session_id):
     for trunk_number in shared.trunks_indexes():
         addresses_on_trunk_response.append(
             [
-                data_types.SensorAddressInfo(
+                responses.data_types.SensorAddressInfo(
                     trunk_number=trunk_number,
                     sensor_index=0,
                     is_error_detected=False,
@@ -61,7 +61,7 @@ def test_rescans_trunks(_mocked_get_random_session_id):
     for trunk_number in shared.trunks_indexes():
         temperatures_on_trunk_response.append(
             [
-                data_types.SensorTemperatureInfo(
+                responses.data_types.SensorTemperatureInfo(
                     trunk_number=trunk_number,
                     sensor_index=0,
                     is_connected=True,

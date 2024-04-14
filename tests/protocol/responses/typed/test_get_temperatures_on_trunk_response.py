@@ -2,13 +2,12 @@ import math
 
 from tests.support import common_packets
 
-from vrc_t70.protocol.responses import raw_response_data
-from vrc_t70.protocol.responses.typed import get_temperatures_on_trunk_response
+from vrc_t70.protocol import responses
 
 
 def test_can_parse_get_temperatures_on_trunk_response_with_multiple_sensors():
-    raw_response = raw_response_data.deserialize(data=common_packets.GET_TEMPERATURES_ON_TRUNK_RESPONSE_5_SENSORS)
-    response = get_temperatures_on_trunk_response.GetTemperaturesOnTrunkResponse(
+    raw_response = responses.deserialize(data=common_packets.GET_TEMPERATURES_ON_TRUNK_RESPONSE_5_SENSORS)
+    response = responses.GetTemperaturesOnTrunkResponse(
         raw_response=raw_response
     )
 
@@ -35,8 +34,8 @@ def test_can_parse_get_temperatures_on_trunk_response_with_multiple_sensors():
 
 
 def test_can_parse_get_temperatures_on_trunk_response_with_one_sensor():
-    raw_response = raw_response_data.deserialize(data=common_packets.GET_TEMPERATURES_ON_TRUNK_RESPONSE_1_SENSOR)
-    response = get_temperatures_on_trunk_response.GetTemperaturesOnTrunkResponse(
+    raw_response = responses.deserialize(data=common_packets.GET_TEMPERATURES_ON_TRUNK_RESPONSE_1_SENSOR)
+    response = responses.GetTemperaturesOnTrunkResponse(
         raw_response=raw_response
     )
     sensors_temperature = response.sensors_temperature

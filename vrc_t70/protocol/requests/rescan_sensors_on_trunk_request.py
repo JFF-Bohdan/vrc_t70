@@ -1,10 +1,10 @@
 import typing
 
 from vrc_t70 import limitations
-from vrc_t70.protocol.requests import base_request, request_codes
+from vrc_t70.protocol import requests
 
 
-class RescanSensorsOnTrunkRequest(base_request.BaseRequest):
+class RescanSensorsOnTrunkRequest(requests.BaseRequest):
     """
     Requests rescan of available sensors on a trunk
     """
@@ -19,7 +19,7 @@ class RescanSensorsOnTrunkRequest(base_request.BaseRequest):
 
         super().__init__(
             address=address,
-            request_id=request_codes.RequestCodes.RESCAN_SENSORS_ON_TRUNK,
+            request_id=requests.RequestCodes.RESCAN_SENSORS_ON_TRUNK,
             sequence_id=sequence_id,
             data=bytes([trunk_number]),
             additional_wait_time_for_response=additional_wait_time_for_response

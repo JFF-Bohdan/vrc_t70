@@ -5,7 +5,7 @@ from tests.support import common_packets
 from tests.support import fake_serial
 
 from vrc_t70 import controller_communicator
-from vrc_t70.protocol.responses.typed import data_types
+from vrc_t70.protocol import responses
 
 
 def test_can_create_communicator():
@@ -125,61 +125,61 @@ def test_get_sensors_unique_address_on_trunk():
     port = fake_serial.FakeSerial(responses=common_packets.GET_SENSORS_UNIQUE_ADDRESS_ON_TRUNK_RESPONSE_10_SENSORS)
     comm = controller_communicator.VrcT70Communicator(port=port, address=0x08, sequence_id=0x2233)
     expected_response = [
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=0,
             is_error_detected=False,
             address=0x54000001f15c5728,
         ),
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=1,
             is_error_detected=True,
             address=0xf8031674dc8aff28,
         ),
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=2,
             is_error_detected=False,
             address=0x66041674b616ff28,
         ),
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=3,
             is_error_detected=True,
             address=0xf5031674e23eff28,
         ),
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=4,
             is_error_detected=False,
             address=0x9f0416805499ff28,
         ),
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=5,
             is_error_detected=False,
             address=0x87031674b483ff28,
         ),
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=6,
             is_error_detected=True,
             address=0x2818b4490c00007c,
         ),
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=7,
             is_error_detected=True,
             address=0x28cc19490c0000bb,
         ),
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=8,
             is_error_detected=True,
             address=0x2819ef480c000021,
         ),
-        data_types.SensorAddressInfo(
+        responses.data_types.SensorAddressInfo(
             trunk_number=4,
             sensor_index=9,
             is_error_detected=False,

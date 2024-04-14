@@ -5,7 +5,7 @@ from tests.support import ex_time_machine
 from tests.support import fake_serial
 
 from vrc_t70 import controller_communicator, exceptions
-from vrc_t70.protocol.requests import request_codes
+from vrc_t70.protocol import requests
 
 
 TEST_CASES = [
@@ -87,7 +87,7 @@ def test_for_response_types_validation():
 
     # Confirming that we have test cases for all available commands
     available_test_cases_requests = [extract_request_id(case[1][0]) for case in TEST_CASES]
-    assert set(available_test_cases_requests) == set(request_codes.RequestCodes.all_known_codes())
+    assert set(available_test_cases_requests) == set(requests.RequestCodes.all_known_codes())
 
     for wrong_packet, expected_communication, sender in TEST_CASES:
         wrong_packet = wrong_packet if wrong_packet else common_packets.PING_RESPONSE

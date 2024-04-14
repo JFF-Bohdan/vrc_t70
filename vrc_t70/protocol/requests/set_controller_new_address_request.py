@@ -1,10 +1,10 @@
 import typing
 
 from vrc_t70 import limitations
-from vrc_t70.protocol.requests import base_request, request_codes
+from vrc_t70.protocol import requests
 
 
-class SetControllerNewAddressRequest(base_request.BaseRequest):
+class SetControllerNewAddressRequest(requests.BaseRequest):
     """
     Configures new address of controller
     """
@@ -19,7 +19,7 @@ class SetControllerNewAddressRequest(base_request.BaseRequest):
 
         super().__init__(
             address=address,
-            request_id=request_codes.RequestCodes.SET_CONTROLLER_NEW_ADDRESS,
+            request_id=requests.RequestCodes.SET_CONTROLLER_NEW_ADDRESS,
             sequence_id=sequence_id,
             data=bytes([new_controller_address]),
             additional_wait_time_for_response=additional_wait_time_for_response,

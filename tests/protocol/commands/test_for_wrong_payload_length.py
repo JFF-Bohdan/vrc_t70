@@ -2,7 +2,7 @@ import pytest
 
 from vrc_t70 import exceptions
 from vrc_t70.crc import default_crc
-from vrc_t70.protocol.responses import raw_response_data, typed_responses_factory
+from vrc_t70.protocol import responses
 
 
 @pytest.mark.parametrize(
@@ -171,10 +171,10 @@ def test_raises_exception_on_wrong_payload_length_when_packet_structure_is_corre
 
     # We shouldn't have any exception here if all provided examples are logically correct according
     # to description of responses in protocol
-    raw_data = raw_response_data.deserialize(data)
+    raw_data = responses.deserialize(data)
 
     # And finally we would expect exception here, because even considering that raw data is correct
     # from perspective of response's description, these packets shouldn't be logically correct
-    factory = typed_responses_factory.ResponsesFactory()
+    factory = responses.ResponsesFactory()
     with pytest.raises(exceptions.ErrorWrongPayloadLength):
         factory.create(raw_response=raw_data)

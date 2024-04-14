@@ -1,9 +1,9 @@
 import typing
 
-from vrc_t70.protocol.requests import base_request, request_codes
+from vrc_t70.protocol import requests
 
 
-class SetSessionIdRequest(base_request.BaseRequest):
+class SetSessionIdRequest(requests.BaseRequest):
     """
     Sets new session id.
     """
@@ -17,7 +17,7 @@ class SetSessionIdRequest(base_request.BaseRequest):
         session_id = session_id & 0xffffffff
         super().__init__(
             address=address,
-            request_id=request_codes.RequestCodes.SET_SESSION_ID,
+            request_id=requests.RequestCodes.SET_SESSION_ID,
             sequence_id=sequence_id,
             data=bytes(
                 [

@@ -1,9 +1,9 @@
 import typing
 
-from vrc_t70.protocol.requests import base_request, request_codes
+from vrc_t70.protocol import requests
 
 
-class PingRequest(base_request.BaseRequest):
+class PingRequest(requests.BaseRequest):
     """
     Performs ping request. Can be used to check if controller is available for communication.
     """
@@ -15,7 +15,7 @@ class PingRequest(base_request.BaseRequest):
     ):
         super().__init__(
             address=address,
-            request_id=request_codes.RequestCodes.PING,
+            request_id=requests.RequestCodes.PING,
             sequence_id=sequence_id,
             additional_wait_time_for_response=additional_wait_time_for_response,
         )

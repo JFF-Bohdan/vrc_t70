@@ -1,14 +1,14 @@
 import pytest
 
 from vrc_t70 import exceptions
-from vrc_t70.protocol.requests.base_request import BaseRequest
+from vrc_t70.protocol import requests
 
 
 def test_can_serialize_request_without_payload():
-    request = BaseRequest(
+    request = requests.BaseRequest(
         address=0xaa,
         request_id=0xbb,
-        sequence_id=0xccdd
+        sequence_id=0xccdd,
     )
 
     data = request.serialize()
@@ -16,7 +16,7 @@ def test_can_serialize_request_without_payload():
 
 
 def test_can_serialize_request_with_payload():
-    request = BaseRequest(
+    request = requests.BaseRequest(
         address=0xaa,
         request_id=0xbb,
         sequence_id=0xccdd,
@@ -28,7 +28,7 @@ def test_can_serialize_request_with_payload():
 
 
 def test_can_serialize_request_without_payload_converting_to_bytes():
-    request = BaseRequest(
+    request = requests.BaseRequest(
         address=0xaa,
         request_id=0xbb,
         sequence_id=0xccdd
@@ -40,7 +40,7 @@ def test_can_serialize_request_without_payload_converting_to_bytes():
 
 
 def test_can_serialize_request_with_payload_using_bytes():
-    request = BaseRequest(
+    request = requests.BaseRequest(
         address=0xaa,
         request_id=0xbb,
         sequence_id=0xccdd,
@@ -53,7 +53,7 @@ def test_can_serialize_request_with_payload_using_bytes():
 
 
 def test_throws_error_when_no_address_specified():
-    request = BaseRequest(
+    request = requests.BaseRequest(
         request_id=0xbb,
         sequence_id=0xccdd,
         data=bytes([0x01, 0x02, 0x03, 0x04, 0x05])
@@ -63,7 +63,7 @@ def test_throws_error_when_no_address_specified():
 
 
 def test_throws_error_when_no_session_id_specified():
-    request = BaseRequest(
+    request = requests.BaseRequest(
         address=0x08,
         request_id=0xbb,
         data=bytes([0x01, 0x02, 0x03, 0x04, 0x05])

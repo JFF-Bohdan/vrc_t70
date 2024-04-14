@@ -6,12 +6,8 @@ import typing
 
 import serial
 
-from vrc_t70 import defaults
-from vrc_t70 import exceptions
-from vrc_t70 import limitations
-from vrc_t70 import shared
-from vrc_t70.protocol.requests import base_request
-from vrc_t70.protocol.responses import base_response, raw_response_data, typed_responses_factory
+from vrc_t70 import defaults, exceptions, limitations, shared
+from vrc_t70.protocol import requests, responses
 
 
 logger = logging.getLogger(__name__)
@@ -40,7 +36,7 @@ class BaseVrcT70Communicator:
 
         self._last_request_time = None
 
-        self._responses_factory = typed_responses_factory.ResponsesFactory()
+        self._responses_factory = responses.ResponsesFactory()
 
         self._max_symbol_wait_time: typing.Optional[float] = None
 
@@ -49,7 +45,7 @@ class BaseVrcT70Communicator:
 
         self.validate_sequence_id = True
 
-    def communicate(self, request: base_request.BaseRequest) -> base_response.BaseResponse:
+    def communicate(self, request: requests.BaseRequest) -> responses.BaseResponse:
         """
         Sends request to a controller and then receives response and creates typed
         class which represents response
@@ -99,7 +95,7 @@ class BaseVrcT70Communicator:
 
         raise exceptions.ErrorNoResponseFromController("No response from controller")
 
-    def _send_request(self, request: base_request.BaseRequest, attempt: int):
+    def _send_request(self, request: requests.BaseRequest, attempt: int):
         """
         Sends prepared request, where should have all values assigned
         """
@@ -118,7 +114,7 @@ class BaseVrcT70Communicator:
     def _read_response(
             self,
             additional_wait_time_for_response: typing.Optional[float] = None
-    ) -> raw_response_data.RawResponseData:
+    ) -> responses.RawResponseData:
         # 1 byte - device address
         # 1 byte - id event
         # 2 bytes - sequence id
@@ -153,7 +149,7 @@ class BaseVrcT70Communicator:
         debug_data = binascii.hexlify(raw_bytes).decode("ascii")
         logger.debug(f"Received: {debug_data}")
 
-        return raw_response_data.deserialize(bytes(raw_bytes))
+        return responses.deserialize(bytes(raw_bytes))
 
     def _make_delay_before_request(self):
         if self._last_request_time is None:
@@ -190,7 +186,7 @@ class BaseVrcT70Communicator:
         time_spent = time.monotonic() - timestamp_begin
         return result, time_spent
 
-    def _prepare_request(self, request: base_request.BaseRequest) -> base_request.BaseRequest:
+    def _prepare_request(self, request: requests.BaseRequest) -> requests.BaseRequest:
         request = copy.deepcopy(request)
         if request.address is None:
             request.address = self.address

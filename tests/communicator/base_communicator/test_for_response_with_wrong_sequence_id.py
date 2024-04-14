@@ -8,8 +8,7 @@ from tests.support import ex_time_machine
 from tests.support import fake_serial
 
 from vrc_t70 import controller_communicator, exceptions
-from vrc_t70.protocol.requests import get_session_id_request
-from vrc_t70.protocol.responses.typed import get_session_id_response
+from vrc_t70.protocol import requests, responses
 
 
 def wrong_and_right_sequence_id() -> bytes:
@@ -37,8 +36,8 @@ def test_ignores_response_with_wrong_sequence_id():
         sequence_id=0x2233,
     )
     communicator.validate_sequence_id = True
-    response = communicator.communicate(get_session_id_request.GetSessionIdRequest())
-    response = typing.cast(get_session_id_response.GetSessionIdResponse, response)
+    response = communicator.communicate(requests.GetSessionIdRequest())
+    response = typing.cast(responses.GetSessionIdResponse, response)
     assert response.session_id == 0xdeadbeef
     assert fake_port.written_data == [common_packets.GET_SESSION_ID_REQUEST] * 2
 
@@ -55,7 +54,7 @@ def test_raises_exception_when_no_response_with_expected_sequence_id():
     )
     communicator.validate_sequence_id = True
     with pytest.raises(exceptions.ErrorNoResponseFromController):
-        _ = communicator.communicate(get_session_id_request.GetSessionIdRequest())
+        _ = communicator.communicate(requests.GetSessionIdRequest())
 
 
 def test_accept_response_with_wrong_sequence_id_when_configured_to_ignore_this():
@@ -69,7 +68,7 @@ def test_accept_response_with_wrong_sequence_id_when_configured_to_ignore_this()
         sequence_id=0x2233,
     )
     communicator.validate_sequence_id = False
-    response = communicator.communicate(get_session_id_request.GetSessionIdRequest())
-    response = typing.cast(get_session_id_response.GetSessionIdResponse, response)
+    response = communicator.communicate(requests.GetSessionIdRequest())
+    response = typing.cast(responses.GetSessionIdResponse, response)
     assert response.session_id == 0xcafebabe
     assert fake_port.written_data == [common_packets.GET_SESSION_ID_REQUEST]

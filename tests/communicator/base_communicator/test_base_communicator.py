@@ -8,8 +8,7 @@ from tests.support import ex_time_machine
 from tests.support import fake_serial
 
 from vrc_t70 import controller_communicator, exceptions
-from vrc_t70.protocol.requests import get_session_id_request, ping_request
-from vrc_t70.protocol.responses.typed import get_session_id_response, ping_response
+from vrc_t70.protocol import requests, responses
 
 
 def test_can_create_communicator():
@@ -29,8 +28,8 @@ def test_can_perform_ping_and_get_pong_response():
         address=0x08,
         sequence_id=0x2233
     )
-    response = communicator.communicate(ping_request.PingRequest())
-    assert isinstance(response, ping_response.PingResponse)
+    response = communicator.communicate(requests.PingRequest())
+    assert isinstance(response, responses.PingResponse)
     assert fake_port.written_data == [common_packets.PING_REQUEST]
 
 
@@ -43,8 +42,8 @@ def test_will_use_address_from_request_when_specified():
         address=0x05,
         sequence_id=0x0102
     )
-    response = communicator.communicate(ping_request.PingRequest(address=0x08, sequence_id=0x2233))
-    assert isinstance(response, ping_response.PingResponse)
+    response = communicator.communicate(requests.PingRequest(address=0x08, sequence_id=0x2233))
+    assert isinstance(response, responses.PingResponse)
     assert fake_port.written_data == [common_packets.PING_REQUEST]
 
 
@@ -57,8 +56,8 @@ def test_will_use_address_from_communicator_when_no_address_in_request():
         address=0x08,
         sequence_id=0x2233
     )
-    response = communicator.communicate(ping_request.PingRequest())
-    assert isinstance(response, ping_response.PingResponse)
+    response = communicator.communicate(requests.PingRequest())
+    assert isinstance(response, responses.PingResponse)
     assert fake_port.written_data == [common_packets.PING_REQUEST]
 
 
@@ -72,7 +71,7 @@ def test_retries_when_no_responses_and_then_gives_up():
     )
 
     with pytest.raises(exceptions.ErrorNoResponseFromController):
-        communicator.communicate(ping_request.PingRequest(address=0x08, sequence_id=0x2233))
+        communicator.communicate(requests.PingRequest(address=0x08, sequence_id=0x2233))
 
     assert fake_port.written_data == [common_packets.PING_REQUEST] * 5
 
@@ -95,11 +94,11 @@ def test_can_ping_when_port_sends_only_one_symbol_at_time():
         address=0x08,
         sequence_id=0x2233,
     )
-    request = ping_request.PingRequest(address=0x08, sequence_id=0x2233)
+    request = requests.PingRequest(address=0x08, sequence_id=0x2233)
     expected_sent_bytes = bytes(request)
 
     response = communicator.communicate(request)
-    assert isinstance(response, ping_response.PingResponse)
+    assert isinstance(response, responses.PingResponse)
     assert sent_data == expected_sent_bytes
 
 
@@ -120,7 +119,7 @@ def test_can_ping_when_controller_is_slow():
         address=0x08,
         sequence_id=0x2233,
     )
-    communicator.communicate(ping_request.PingRequest())
+    communicator.communicate(requests.PingRequest())
     assert fake_port.written_data == [common_packets.PING_REQUEST]
 
 
@@ -132,8 +131,8 @@ def test_can_communicate_with_slow_controller_when_response_contains_payload():
         address=0x08,
         sequence_id=0x2233,
     )
-    response = communicator.communicate(get_session_id_request.GetSessionIdRequest())
-    response = typing.cast(get_session_id_response.GetSessionIdResponse, response)
+    response = communicator.communicate(requests.GetSessionIdRequest())
+    response = typing.cast(responses.GetSessionIdResponse, response)
     assert response.session_id == 0xdeadbeef
     assert fake_port.written_data == [common_packets.GET_SESSION_ID_REQUEST]
 
@@ -153,7 +152,7 @@ def test_adjusts_sequence_id_on_overflow():
         address=0x08,
         sequence_id=0xfffd,
     )
-    communicator.communicate(ping_request.PingRequest())
-    communicator.communicate(ping_request.PingRequest())
-    communicator.communicate(ping_request.PingRequest())
-    communicator.communicate(ping_request.PingRequest())
+    communicator.communicate(requests.PingRequest())
+    communicator.communicate(requests.PingRequest())
+    communicator.communicate(requests.PingRequest())
+    communicator.communicate(requests.PingRequest())

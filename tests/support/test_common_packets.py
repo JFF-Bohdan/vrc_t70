@@ -6,7 +6,7 @@ from tests.support import ex_time_machine
 
 from vrc_t70 import exceptions
 from vrc_t70.crc import default_crc
-from vrc_t70.protocol.responses import raw_response_data
+from vrc_t70.protocol import responses
 
 
 def get_variables(module_name) -> list[tuple[str, typing.Any]]:
@@ -71,6 +71,6 @@ def test_all_sample_response_packets_are_deserializable():
             continue
 
         try:
-            _ = raw_response_data.deserialize(var)
+            _ = responses.deserialize(var)
         except exceptions.ErrorBaseVrcT70:
             assert 0, f"Variable {name} can't be properly deserialized"

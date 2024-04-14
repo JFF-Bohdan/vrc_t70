@@ -1,14 +1,13 @@
 from tests.support import common_packets
 
-from vrc_t70.protocol.responses import raw_response_data
-from vrc_t70.protocol.responses.typed import get_sensors_unique_address_on_trunk_response
+from vrc_t70.protocol import responses
 
 
 def test_can_parse_get_sensors_unique_addresses_on_trunk_response_1_sensor():
-    raw_response = raw_response_data.deserialize(
+    raw_response = responses.deserialize(
         data=common_packets.GET_SENSORS_UNIQUE_ADDRESS_ON_TRUNK_RESPONSE_1_SENSOR
     )
-    response = get_sensors_unique_address_on_trunk_response.GetSensorsUniqueAddressOnTrunkResponse(
+    response = responses.GetSensorsUniqueAddressOnTrunkResponse(
         raw_response=raw_response
     )
     sensors_address = response.sensors_address
@@ -25,10 +24,10 @@ def test_can_parse_get_sensors_unique_addresses_on_trunk_response_4_sensors():
         (0x28ff6f31901504ab, False),
         (0x28ff0930901504a9, True),
     )
-    raw_response = raw_response_data.deserialize(
+    raw_response = responses.deserialize(
         data=common_packets.GET_SENSORS_UNIQUE_ADDRESS_ON_TRUNK_RESPONSE_4_SENSORS
     )
-    response = get_sensors_unique_address_on_trunk_response.GetSensorsUniqueAddressOnTrunkResponse(
+    response = responses.GetSensorsUniqueAddressOnTrunkResponse(
         raw_response=raw_response
     )
     sensors_address_info = response.sensors_address
@@ -57,10 +56,10 @@ def test_can_parse_get_sensors_unique_addresses_on_trunk_response_10_sensors():
         (0x28c6de49f6b63c55, False)
     )
 
-    raw_response = raw_response_data.deserialize(
+    raw_response = responses.deserialize(
         data=common_packets.GET_SENSORS_UNIQUE_ADDRESS_ON_TRUNK_RESPONSE_10_SENSORS
     )
-    response = get_sensors_unique_address_on_trunk_response.GetSensorsUniqueAddressOnTrunkResponse(
+    response = responses.GetSensorsUniqueAddressOnTrunkResponse(
         raw_response=raw_response
     )
     sensors_address_info = response.sensors_address
