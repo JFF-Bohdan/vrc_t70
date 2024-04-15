@@ -23,7 +23,7 @@ def demo_app_2(additional_args):
     arg_parser = basic_arg_parser.create_basic_parser_for_single_controller()
     args = arg_parser.parse_args(additional_args)
 
-    cli_shared.setup_logging()
+    # cli_shared.setup_logging()
     logger.info("Connecting to controller")
 
     stop_event = threading.Event()

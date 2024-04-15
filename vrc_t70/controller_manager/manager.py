@@ -103,7 +103,7 @@ class VrcT70Manager:
             if refresh_requests_added_count:
                 return
         else:
-            logger.warning("Not all trunks are scanned can't request temperatures periodically")
+            logger.info("Not all trunks are scanned can't request temperatures periodically")
 
         # If queue is empty but data for some trunk is missing, we need to retrieve addresses and temperatures
         if self.context.tasks_queue.empty() and (not self.context.has_data_for_all_trunks()):

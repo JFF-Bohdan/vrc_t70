@@ -7,8 +7,6 @@ import click
 
 import humanize
 
-import terminaltables
-
 from vrc_t70 import controller_communicator, shared
 from vrc_t70.cli_tools import basic_arg_parser, shared as cli_shared
 
@@ -19,22 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
-class TrunkInfo:
-    sensors_count: int = 0
-    sensors_addresses: dict[int, int] = dataclasses.field(default_factory=lambda: {})
-    sensors_temperatures: dict[int, float] = dataclasses.field(default_factory=lambda: {})
-
-
-@dataclasses.dataclass
-class VrcT70DeviceInfo:
-    address: int = 0
-    session_id: int = 0
-    trunks: dict[int, TrunkInfo] = dataclasses.field(default_factory=lambda: {})
-
-
-@dataclasses.dataclass
 class ScanResults:
-    info: VrcT70DeviceInfo
+    info: cli_shared.VrcT70DeviceInfo
     time_elapsed: datetime.timedelta
 
 
@@ -44,7 +28,7 @@ def sequential_scan(
 ) -> ScanResults:
     timestamp_begin = time.monotonic()
 
-    scan_info = VrcT70DeviceInfo(address=address)
+    scan_info = cli_shared.VrcT70DeviceInfo(address=address)
 
     logger.debug(f"Setting session id to 0x{DESIRED_SESSION_ID_1:x}")
     connection.set_session_id(DESIRED_SESSION_ID_1)
@@ -53,7 +37,7 @@ def sequential_scan(
     scan_info.session_id = session_id
 
     for trunk_number in shared.trunks_indexes():
-        trunk_info = TrunkInfo()
+        trunk_info = cli_shared.TrunkInfo()
         sensors_count_from_rescan = connection.rescan_sensors_on_trunk(trunk_number=trunk_number)
         if not sensors_count_from_rescan:
             scan_info.trunks[trunk_number] = trunk_info
@@ -99,7 +83,7 @@ def batched_scan(
 ) -> ScanResults:
     timestamp_begin = time.monotonic()
 
-    scan_info = VrcT70DeviceInfo(address=address)
+    scan_info = cli_shared.VrcT70DeviceInfo(address=address)
 
     logger.debug(f"Setting session id to 0x{DESIRED_SESSION_ID_2:x}")
     connection.set_session_id(DESIRED_SESSION_ID_2)
@@ -108,7 +92,7 @@ def batched_scan(
     scan_info.session_id = session_id
 
     for trunk_number in shared.trunks_indexes():
-        trunk_info = TrunkInfo()
+        trunk_info = cli_shared.TrunkInfo()
         sensors_count_from_rescan = connection.rescan_sensors_on_trunk(trunk_number=trunk_number)
         logger.info(f"Sensors count on trunk {trunk_number} is {sensors_count_from_rescan}")
         trunk_info.sensors_count = sensors_count_from_rescan
@@ -153,41 +137,12 @@ def print_scan_results(results: ScanResults):
         results.time_elapsed,
         minimum_unit="milliseconds", format="%0.2f"
     )
-
-    info = results.info
     logger.info(
-        f"Scan finished for controller 0x{info.address:02x} with session id 0x{info.session_id:04x} in {scan_time}"
+        f"Scan finished for controller 0x{results.info.address:02x} with "
+        f"session id 0x{results.info.session_id:04x} in {scan_time}"
     )
-
-    header = ["Trunk", "Sensor index", "Sensor address", "Temperature"]
-    table_data = [header]
-
-    for trunk_number in shared.trunks_indexes():
-        trunk_info = info.trunks[trunk_number]
-        sensors_index = []
-        sensors_address = []
-        sensors_temperature = []
-
-        for sensor_index in range(trunk_info.sensors_count):
-            sensors_index.append(str(sensor_index))
-            sensors_address.append(f"{trunk_info.sensors_addresses[sensor_index]:08x}")
-            sensors_temperature.append(f"{trunk_info.sensors_temperatures[sensor_index]:0.2f}")
-
-        sensors_index = "\n".join(sensors_index) if sensors_index else "N/A"
-        sensors_address = "\n".join(sensors_address) if sensors_address else "N/A"
-        sensors_temperature = "\n".join(sensors_temperature) if sensors_temperature else "N/A"
-        table_data.append(
-            [
-                int(trunk_number),
-                sensors_index,
-                sensors_address,
-                sensors_temperature,
-            ]
-        )
-        # for sensor_index in range(trunk_info.sensors_count):
-
-    table = terminaltables.AsciiTable(table_data=table_data)
-    logger.info(f"Scan results:\n{table.table}")
+    report = cli_shared.print_scan_info(results.info)
+    logger.info(f"Scan results:\n{report}")
 
 
 @click.command(
